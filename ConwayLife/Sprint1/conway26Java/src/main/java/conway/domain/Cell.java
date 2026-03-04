@@ -12,8 +12,11 @@ public class Cell implements ICell {
 
 	@Override
 	public boolean isAlive() {
-		// TODO Auto-generated method stub
 		return this.status;
+	}
+	
+	public void switchState() {
+		this.status = !this.status;
 	}
 
 }
