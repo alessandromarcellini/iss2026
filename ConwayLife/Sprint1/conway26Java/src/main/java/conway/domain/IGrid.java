@@ -9,8 +9,8 @@ public interface IGrid {
 	public int getNumCols(); // Restituisce il numero di colonne di cui è composta la griglia
 	
 	// Operazioni non primitive
-	public int countAliveNeighbors(int x, int y); // Restituisce il numero di vicini vivi per una specificata cella
+	public int countAliveNeighbors(int row, int col); // Restituisce il numero di vicini vivi per una specificata cella
 	public void resetGrid(); // La griglia può essere resettata allo stato iniziale (tutte celle "morte")
-	public void setCellStatus(boolean status, int x, int y); // La griglia deve permettere di settare lo stato di una sua cella
-	public boolean getCellStatus(int x, int y); // La griglia deve permettere di controllare lo stato di una sua cella
+	public void setCellStatus(boolean status, int row, int col); // La griglia deve permettere di settare lo stato di una sua cella
+	public boolean getCellStatus(int row, int col); // La griglia deve permettere di controllare lo stato di una sua cella
 }

@@ -8,7 +8,7 @@ public class Grid implements IGrid {
 	private ICell[][] cells;
 	
 	public Grid(int nCols, int nRows) {
-		this.cells = new Cell[nCols][nRows];
+		this.cells = new Cell[nRows][nCols];
 		this.resetGrid();
 	}
 	
@@ -16,17 +16,18 @@ public class Grid implements IGrid {
 	public int getNumRows() {
 		return this.cells.length;
 	}
+	
 	public int getNumCols() {
 		return this.cells[0].length;
 	}
 	
 	// Operazioni non primitive
-	public int countAliveNeighbors(int x, int y) {
+	public int countAliveNeighbors(int row, int col) {
 		int nAliveNeighbors = 0;
 		for (int i = -1; i <= 1; i++) {
 			for (int j = -1; j <= 1; j++) {
-				if (!(x + i < 0 || x + i >= this.getNumRows() || y + j < 0 || y + j >= this.getNumCols() || (i == 0 && j == 0))) {
-					if (this.cells[x + i][y + j].isAlive()) {
+				if (!(row + i < 0 || row + i >= this.getNumRows() || col + j < 0 || col + j >= this.getNumCols() || (i == 0 && j == 0))) {
+					if (this.cells[row + i][col + j].isAlive()) {
 						nAliveNeighbors++;
 					}
 				}
@@ -39,18 +40,23 @@ public class Grid implements IGrid {
 		int nCols = this.getNumCols();
 		int nRows = this.getNumRows();
 		
-		for (int i = 0; i < nCols; i++) {
-			for (int j = 0; j < nRows; j++) {
+		for (int i = 0; i < nRows; i++) {
+			for (int j = 0; j < nCols; j++) {
 				this.cells[i][j] = new Cell(false);
 			}
 		}
 	}
 	
-	public void setCellStatus(boolean status, int x, int y) {
-		this.cells[x][y].setStatus(status);
+	public void setCellStatus(boolean status, int row, int col) {
+		if (row >= 0 && row < getNumRows() && col >= 0 && col < getNumCols()) {
+		    cells[row][col].setStatus(status);
+		}
 	}
 	
-	public boolean getCellStatus(int x, int y) {
-		return this.cells[x][y].isAlive();
+	public boolean getCellStatus(int row, int col) {
+		if (row >= 0 && row < getNumRows() && col >= 0 && col < getNumCols()) {
+			return this.cells[row][col].isAlive();
+		}
+		return null; // can be done better with an exception. won't be doing it for accademic purposes
 	}
 }
