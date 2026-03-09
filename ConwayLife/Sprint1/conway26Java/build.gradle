@@ -17,12 +17,14 @@ repositories {
 }
 
 dependencies {
-
     /* UNIBO ******************************* */
     implementation name: 'uniboInterfaces'
     implementation name: '2p301'
     implementation name: 'unibo.basicomm23-1.0'
 
+    /* TESTING ******************************* */
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
 }
 
 sourceSets {
@@ -62,6 +64,12 @@ task dovesiamo {
     println("projectDir= $projectDir")
     println("buildDir  = $buildDir")
 }
+
+test {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
  
 jacocoTestReport {
     dependsOn test // Il report viene generato solo dopo l'esecuzione dei test
