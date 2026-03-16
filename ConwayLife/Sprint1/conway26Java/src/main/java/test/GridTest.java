@@ -65,8 +65,8 @@ public class GridTest {
 	@Test
 	public void testResetGrid( ) {
 		// making every cell alive
-		for (int i = 0; i < this.grid.getNumRows()) {
-			for (int j = 0; j < this.grid.getNumCols()) {
+		for (int i = 0; i < this.grid.getNumRows(); i++) {
+			for (int j = 0; j < this.grid.getNumCols(); j++) {
 				this.grid.setCellStatus(true, i, j);
 			}
 		}
@@ -74,8 +74,8 @@ public class GridTest {
 		this.grid.resetGrid();
 		
 		// testing every cell is dead
-		for (int i = 0; i < this.grid.getNumRows()) {
-			for (int j = 0; j < this.grid.getNumCols()) {
+		for (int i = 0; i < this.grid.getNumRows(); i++) {
+			for (int j = 0; j < this.grid.getNumCols(); j++) {
 				assertFalse("Every cell should be dead after reset", this.grid.getCellStatus(i, j));
 			}
 		}	

@@ -18,19 +18,20 @@ public class Life implements LifeInterface{
     public Life(int rows, int cols) {
     	this.rows = rows;
         this.cols = cols;
-        this.gridA = new Grid(rows,cols);  
-        this.gridB = new Grid(rows,cols);  
+        this.gridA = new Grid(cols, rows);  
+        this.gridB = new Grid(cols, rows);  
     }
 
     // Calcola la generazione successiva applicando le 4 regole di Conway
     public void nextGeneration() {
-        for (int r = 0; r < rows; r++) {
-            for (int c = 0; c < cols; c++) {
-                int neighbors = countNeighbors(r,c); 
-            	// Applichiamo le regole leggendo da gridA e scrivendo in gridB
-                applyLifeRules(r,c,neighbors);
+        for (int r = 0; r < gridA.getNumRows(); r++) {
+            for (int c = 0; c < gridA.getNumCols(); c++) {
+                // conta il numero di vicini vivi
+                int neighbors = gridA.countAliveNeighbors(r, c);
+                // applica le regole di gioco
+                applyLifeRules(r, c, neighbors);
             }
-        }//for
+        }
         swapGrids();
     }
     
@@ -47,27 +48,6 @@ public class Life implements LifeInterface{
       gridB.setCellStatus(nextV,row,col);
     }
 
- /*
-    protected void applyRules(int row, int col, int numNeighbors) {
-    	//AIT complessità maggiore di applyLifeRules
-    	//CELLA VIVA
-        if( gridA.getCell(row, col).isAlive()) {
-        	if (numNeighbors < 2) { //muore per isolamento
-        		gridB.setCellValue(row, col, false);
-        	}else if (numNeighbors == 2 || numNeighbors == 3) { //sopravvive
-        		gridB.setCellValue(row, col, true);
-        	}else if (numNeighbors > 3) { //muore per sovrappopolazione
-        		gridB.setCellValue(row, col, false);
-        	}
-        }
-        //CELLA MORTA
-        else {
-        	if (numNeighbors == 3) { //riproduzione
-        		gridB.setCellValue(row, col, true);
-        	}
-        }
-    }
-*/
     
     protected void swapGrids() {
         // Scambiamo i riferimenti: ciò che era 'next' diventa 'current'
@@ -87,40 +67,40 @@ public class Life implements LifeInterface{
      * @param col Coordinata y (colonna)
      * @return Numero di vicini vivi (da 0 a 8)
      */
-    protected int countNeighbors(  int row, int col) {
-        int count = 0;
-        /*
-         * La descrizione è più compressa di countNeighborsLive. 
-         * Invece di dire "controlla sopra, 
-         * controlla sotto, controlla a destra...", diciamo 
-         * "controlla tutto ciò che sta tra -1 e +1".
-         * 
-         * Rimpiazza 8 blocchi logici distinti con un'unica regola iterativa. 
-         * Nella teoria AIT, questa è una forma di compressione dei dati.
-         * 
-         */
-        // Cicliamo da -1 a +1 rispetto alla posizione centrale
-        for (int i = -1; i <= 1; i++) {
-            for (int j = -1; j <= 1; j++) {
-                
-                // Saltiamo il caso 0,0 (è la cella stessa, non un vicino)
-                if (i == 0 && j == 0) continue;
-
-                int neighborRow = row + i;
-                int neighborCol = col + j;
-
-                // Verifichiamo che i vicini siano dentro i confini della griglia 5x5
-                if (neighborRow >= 0 && neighborRow < rows && 
-                    neighborCol >= 0 && neighborCol < cols) {
-
-                    if (gridA.getCellStatus(neighborRow,neighborCol)) {
-                        count++;
-                    }
-                }
-            }
-        }
-        return count;
-    }
+//    protected int countNeighbors(  int row, int col) {
+//        int count = 0;
+//        /*
+//         * La descrizione è più compressa di countNeighborsLive. 
+//         * Invece di dire "controlla sopra, 
+//         * controlla sotto, controlla a destra...", diciamo 
+//         * "controlla tutto ciò che sta tra -1 e +1".
+//         * 
+//         * Rimpiazza 8 blocchi logici distinti con un'unica regola iterativa. 
+//         * Nella teoria AIT, questa è una forma di compressione dei dati.
+//         * 
+//         */
+//        // Cicliamo da -1 a +1 rispetto alla posizione centrale
+//        for (int i = -1; i <= 1; i++) {
+//            for (int j = -1; j <= 1; j++) {
+//                
+//                // Saltiamo il caso 0,0 (è la cella stessa, non un vicino)
+//                if (i == 0 && j == 0) continue;
+//
+//                int neighborRow = row + i;
+//                int neighborCol = col + j;
+//
+//                // Verifichiamo che i vicini siano dentro i confini della griglia 5x5
+//                if (neighborRow >= 0 && neighborRow < rows && 
+//                    neighborCol >= 0 && neighborCol < cols) {
+//
+//                    if (gridA.getCellStatus(neighborRow,neighborCol)) {
+//                        count++;
+//                    }
+//                }
+//            }
+//        }
+//        return count;
+//    }
 
     @Override
     public ICell getCell(int r, int c) { return gridA.getCell(r,c); }

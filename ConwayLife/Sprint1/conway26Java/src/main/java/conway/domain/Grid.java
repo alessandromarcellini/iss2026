@@ -57,6 +57,10 @@ public class Grid implements IGrid {
 		if (row >= 0 && row < getNumRows() && col >= 0 && col < getNumCols()) {
 			return this.cells[row][col].isAlive();
 		}
-		return null; // can be done better with an exception. won't be doing it for accademic purposes
+		return false; // can be done better
+	}
+	
+	public ICell getCell(int row, int col) {
+		return this.cells[row][col];
 	}
 }
