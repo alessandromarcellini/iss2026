@@ -2,6 +2,7 @@ package main.java.conway.devices;
 
 import main.java.conway.domain.Cell;
 import main.java.conway.domain.Grid;
+import main.java.conway.domain.IGrid;
 import main.java.conway.domain.IOutDev;
 import unibo.basicomm23.utils.CommUtils;
 
@@ -24,7 +25,7 @@ public class MockOutdev implements IOutDev{
 	}
 
 	@Override
-	public void displayGrid(Grid grid) {
+	public void displayGrid(IGrid grid) {
  		//grid.printGrid();
 	}
 

@@ -21,6 +21,8 @@ dependencies {
     implementation name: 'uniboInterfaces'
     implementation name: '2p301'
     implementation name: 'unibo.basicomm23-1.0'
+    
+    implementation 'com.googlecode.json-simple:json-simple:1.1.1'
 
     /* TESTING ******************************* */
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
@@ -45,7 +47,7 @@ eclipse {
 application {
     //Define the main class for the application.
     //mainClassName    = 'conway26Java.HelloWorld'
-    mainClassName    = 'conway26Java.MainConwayLifeJava'
+    mainClassName    = 'main.java.conway.MainConwayLifeJava'
 }
 
 jar {
