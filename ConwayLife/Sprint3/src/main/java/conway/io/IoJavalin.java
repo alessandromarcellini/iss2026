@@ -5,6 +5,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+
+import conway.domain.Life;
+import conway.domain.LifeController;
+import conway.domain.WsOutDev;
 import io.javalin.Javalin;
 import io.javalin.http.staticfiles.Location;
 import io.javalin.websocket.WsMessageContext;
@@ -12,9 +16,15 @@ import unibo.basicomm23.utils.CommUtils;
 import unibo.basicomm23.interfaces.IApplMessage;
 import unibo.basicomm23.msg.ApplMessage;
 
+import conway.domain.IOutDev;
+
 public class IoJavalin {
 	
 	private WsMessageContext pageCtx ;
+	
+	private WsOutDev wsOutDev = new WsOutDev();
+	private LifeController controller;
+	private boolean hasStarted = false;
 	public IoJavalin() {
         var app = Javalin.create(config -> {
 			config.staticFiles.add(staticFiles -> {
@@ -25,6 +35,7 @@ public class IoJavalin {
 				 */
 		    });
 		}).start(8080);
+        this.controller = new LifeController(Life.CreateLife(20, 20), this.wsOutDev);
  
 /*
  * --------------------------------------------
@@ -119,10 +130,35 @@ public class IoJavalin {
                     CommUtils.outblue("IoJavalin |  eval:" + m.msgContent() );
                     if( m.msgContent().equals("ready")) { 
                     	pageCtx = ctx;  //memorizzo connession pagina
-                    }else if( m.msgContent().contains("cell(")) { 
+                    	this.wsOutDev.setCtx(ctx);
+                    }
+                    else if( m.msgContent().contains("start") && !this.hasStarted) {
+                		this.controller.onStart(); 
+                		this.hasStarted = true;
+                	}
+                    else if( m.msgContent().contains("stop") && this.hasStarted) {
+                		this.controller.onStop(); 
+                		this.hasStarted = false;
+                	}
+                    else if( m.msgContent().contains("clear") && !this.hasStarted) {
+                		this.controller.onClear();
+                	}
+                    else if( m.msgContent().contains("cell(") && !this.hasStarted) { 
                     	//Funziona se arriva da CallerServerWs es. cell(5,6,1)
                     	pageCtx.send( m.msgContent()); 
-                    	//TODO: inviare a LifeController
+                    	
+                    	// ------------------------------------------
+                    	String inner = m.msgContent().replace("cell(","").replace(")","");
+                        String[] parts = inner.split(",");
+                        if( parts.length == 2 ) {
+                            controller.switchCellState(
+                                Integer.parseInt(parts[0].trim()),
+                                Integer.parseInt(parts[1].trim()));
+                        } else if( parts.length == 3 ) {
+                            wsOutDev.display(m.msgContent());
+                        }
+
+                    	// ------------------------------------------
                     }else ctx.send(m.msgContent());
                 }catch(Exception e) {
                 	CommUtils.outred("IoJavalin |  error:" + e.getMessage());
