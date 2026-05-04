@@ -265,17 +265,18 @@ div.imagedesc{
     Le lucciole devono essere rappresentate da dei qactor, che lampeggino inizialmente con periodi casuali e che man mano si sincronizzino allo stesso periodo finale. <br>
 	Il risultato della sincronizzazione deve essere raggiunto dopo 10 secondi esatti. <br><br>
 
-	Per permetterne la sincronizzazione dopo 10 secondi esistono vari approcci, quello che useremo è l'approccio ad <span style="font-weight: bold;">orchestratore</span>. <br><br>
-	Scegliamo l'approccio ad orchestratore in quanto <span style="font-weight: bold;">semplice da realizzare </span> e <span style="font-weight: bold;">facilmente scalabile </span>. Questo introdurrà un single point of failure del sistema e un possibile sovraccarico di messaggi verso l'orchestratore, entrambi problemi facilmente risolvibili tramite <span style="font-weight: bold;"> replicazione e partitioning dei messaggi</span>. 
+	Per permetterne la sincronizzazione dopo 10 secondi esistono vari approcci, quello che useremo è l'approccio a <span style="font-weight: bold;">coreografia</span>. <br><br>
+	Scegliamo l'approccio a coreografia in quanto seppur <span style="font-weight: bold;">complesso da realizzare </span> è anche il più <span style="font-weight: bold;">attinente alla realtà </span> e, soprattutto, permette di avere un <span style="font-weight: bold;"> sistema fault tollerant, senza single point of failure.</span>. 
     
     <br>
 	<br>
 	    I <span style="font-weight: bold;">messaggi</span> scambiati nel sistema sono definiti come segue:
     <div class="code">
 		<pre>
-Dispatch cellstate : cellstate(X, Y, COLOR) // per il visualizzatore
-Dispatch shareFrequency : shareFrequency(Frequency) // permette alle lucciole di inviare la propria frequenza all'orchestratore
-Event sync : sync(CurrBestMillis) // emesso dall'orchestratore per dire alle lucciole che è il momento di sincronizzarsi
+Event globalStart : globalStart(start) // emitted from creator in order to make all the fireflies start at the same time
+Dispatch cellstate : cellstate(X, Y, COLOR) // forwarded from firefly to the visualizer
+Dispatch synch_up : synch_up(synch) // autodispatch to start synching with the others
+Event outerFlash : outerFlash(T) // emitted from firefly to notify the others that the firefly has blinked
        </pre>
 	</div>
 	<br>
@@ -286,109 +287,108 @@ Event sync : sync(CurrBestMillis) // emesso dall'orchestratore per dire alle luc
     Il comportamento di una <span style="font-weight: bold;">lucciola</span> è rappresentato dal seguente qactor:
 	<div class="code">
 		<pre>
-QActor firefly context ctxfirefly dynamicOnly { // dynamicOnly significa che questo attore può essere istanziato solo da un altro attore
-	[# 
-	var  X          = 0
-	var  Y          = 0
-	var Timer       = java.util.Random().nextLong(2000L,4000L )
-	var CycleStartMillis = 0L
-	var ExceedingMillis = 0L
-	
-		fun setCellCoords( )  {
-			val coords = name.replace("firefly_","").split("_")   
-			X  = coords[0].toInt()
-			Y  = coords[1].toInt()
-		}		
-	#] 
-	
-	State s0 initial {
-		[# setCellCoords( )                                   #]
-		println("$name | X=$X Y=$Y  SharedTimer=$Timer") color magenta
-		// Invio della propria frequenza all'orchestratore
-		forward fireflies_orchestrator -m shareFrequency : shareFrequency($Timer)
-	}
-	Transition t0
-		whenTimeVar Timer -> flashON
-	
-	State flashON {
-	[# CycleStartMillis = System.currentTimeMillis() #]
-	println("[$name] ON") color magenta
-	forward griddisplay -m cellstate : cellstate($X, $Y, 1)
-}
-	Transition t0
-		whenTimeVar Timer -> flashOFF
-		whenEvent sync -> changeTimer
-	
-	State flashOFF {
-		println("[$name] OFF") color magenta
-		forward griddisplay -m cellstate : cellstate($X, $Y, 0)
-	}
-	Transition t0
-		whenTimeVar Timer -> flashON
-		whenEvent sync -> changeTimer
-	
+QActor firefly context ctxfirefly dynamicOnly {
+    [#
+       var X = 0
+       var Y = 0
+       var Timer = java.util.Random().nextLong(2000L,4000L)
+       var StartingMillis = 0L
+       var ShouldSync = false
 
-	State changeTimer {
-		println("[$name] changing timer!") color blue
-		onMsg( sync : sync(CurrBestMillis) ) {
-			[#
-				Timer = payloadArg(0).toString().toLong()
-			#]
-		}
-	}
-	Goto flashON
+	    fun setCellCoords( )  {
+     		val coords = name.replace("firefly_","").split("_")   
+     		X  = coords[0].toInt()
+     		Y  = coords[1].toInt()
+  		}
+
+       fun checkSyncTime() : Boolean {
+           return System.currentTimeMillis() - StartingMillis >= 10000L
+       }
+    #]
+
+    State s0 initial {
+        [#
+        	setCellCoords()
+          	StartingMillis = System.currentTimeMillis()
+         #]
+        println("$name | coord=($X,0) Timer=$Timer") color magenta
+    }
+    Transition t0
+    	whenEvent globalStart -> flashON
+
+    // INDEPENDENT BLINKING (first 10 seconds)
+    State flashON {
+        println("$name | [IND] ON") color cyan
+        forward griddisplay -m cellstate : cellstate($X, 0, 1)
+        [# ShouldSync = checkSyncTime() #]
+        if [# ShouldSync #] {
+            autodispatch synch_up : synch_up(synch)
+        }
+    }
+    Transition t0
+        whenTimeVar Timer -> flashOFF
+        whenMsg synch_up -> startSync
+
+    State flashOFF {
+        println("$name | [IND] OFF") color cyan
+        forward griddisplay -m cellstate : cellstate($X, 0, 0)
+        [# ShouldSync = checkSyncTime() #]
+        if [# ShouldSync #] {
+            autodispatch synch_up : synch_up(synch)
+        }
+    }
+    Transition t0
+        whenTimeVar Timer -> flashON
+        whenMsg synch_up -> startSync
+
+    // TRANSITION TO SYNCH MODE ------------------------------------------------------------------------------------
+    State startSync {
+        println("$name | entering SYNC mode") color blue
+        // flash ON and broadcast our timer to all peers
+        forward griddisplay -m cellstate : cellstate($X, 0, 1)
+        emit outerFlash : outerFlash($Timer)
+    }
+    Transition t0
+        whenTimeVar Timer -> flashOFFSync
+
+    // SYNCED BLINKING ----------------------------------------------------------------------------------------------
+    State flashONSync {
+        println("$name | [SYNC] ON  Timer=$Timer") color magenta
+        forward griddisplay -m cellstate : cellstate($X, 0, 1)
+        emit outerFlash : outerFlash($Timer)
+    }
+    Transition t0
+        whenTimeVar Timer -> flashOFFSync
+
+    State flashOFFSync {
+        println("$name | [SYNC] OFF Timer=$Timer") color magenta
+        forward griddisplay -m cellstate : cellstate($X, 0, 0)
+    }
+    Transition t0
+        whenTimeVar Timer -> flashONSync
+        whenEvent outerFlash -> absorbWhileOFF
+
+    State absorbWhileOFF {
+    	println("[$name] absorbing") color yellow
+        onMsg( outerFlash : outerFlash(T) ) {
+            [#
+                val incomingTimer = payloadArg(0).toString().toLong()
+                println("AAAA: $incomingTimer < $Timer ?")
+                if (incomingTimer < Timer) {
+                    Timer = incomingTimer
+                    println("$name | adopted faster timer: $Timer")
+                }
+            #]
+        }
+    }
+    Goto flashONSync
 }
 		</pre>
 	</div>
 
-	Il comportamento dell'<span style="font-weight: bold;">orchestratore</span> è definito con il seguente modello:
-		<div class="code">
-			<pre>
-QActor fireflies_orchestrator context ctxfirefly {
-	[#
-		var CurrBestMillis = 0L	
-	#]
-	
-	State s0 initial {
-		println("[ORCHESTRATOR] Started") color blue
-	}
-	Goto orchestrate
-	
-	State orchestrate {		
-		// deve ricevere messaggi dalle varie lucciole e stabilire quale è il T
-		println("[ORCHESTRATOR] ready to accept messages") color blue
-	}
-	Transition t0
-		whenTime 10000 -> sync
-		whenMsg shareFrequency -> evaluateNewFrequency
-	
-	State evaluateNewFrequency {
-		onMsg( shareFrequency : shareFrequency(Frequency) ) {
-			// controlla se la frequenza è migliore ed in caso cambiala
-			[#
-				var OuterTimer = payloadArg(0).toString().toLong()
-				println("[ORCHESTRATOR] evaluating new T: $OuterTimer")
-				if (OuterTimer < CurrBestMillis || CurrBestMillis == 0L) {
-					CurrBestMillis = OuterTimer
-				}
-			#]
-		}
-	}
-	Goto orchestrate
-	
-	State sync {
-		emit sync : sync($CurrBestMillis)
-	}
-}
-			</pre>
-		</div>
-		<br>
-		<br>
-		Per vedere il modello completo <a href="fireflies_orchestrator/src/fireflies_orchestrator.qak" target="_blank" style="font-weight: bold;" >clicca qui</a>
-	
-
-
-
+	<br>
+	<br>
+		Per vedere il modello completo <a href="fireflies_choreography/src/fireflies.qak" target="_blank" style="font-weight: bold;" >clicca qui</a>
 </div>
  
 

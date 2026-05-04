@@ -1,0 +1,133 @@
+System fireflysynch
+
+
+Event globalStart : globalStart(start) // emitted from creator in order to make all the fireflies start at the same time
+
+Dispatch cellstate : cellstate(X, Y, COLOR) // forwarded from firefly to the visualizer
+Dispatch synch_up : synch_up(synch) // autodispatch to start synching with the others
+Event outerFlash : outerFlash(T) // emitted from firefly to notify the others that the firefly has blinked
+
+Context ctxfirefly ip [host="localhost" port=8040]
+Context ctxgrid ip [host="127.0.0.1" port=8050 ] // definisco il contesto in cui vive il visualizzatore (l'infrastruttura si preoccuperebbe se anche qua mettessimo localhost perchè ogni contesto deve avere domain diverso)
+// nota che le porte devono essere diverse essendo entrambi i context su localhost
+
+
+ExternalQActor griddisplay context ctxgrid // definisco un attore esterno nel contesto esterno (è un attore nel qak del progetto griddisplay)
+
+QActor creator context ctxfirefly{
+	State s0 initial{    
+   	 	[#   
+		 clearlog("./logs/app_actorgrid.log") 	//vedi src/main/resources/logback.xml
+	 	#]
+		delay 500 
+//		[# logger.info(  "${currentState.stateName} creates 25 firefly "  ) #]
+		[#
+	    	for( i in 0..2 ){
+	    		for( j in 0..0 ){
+	    			CommUtils.outcyan("$name | CREATES firefly_${i}_${j}")  
+	    			createActorDynamically( "firefly", "_${i}_${j}", false)
+	    		}
+	    	}		 
+    	#]
+    	delay 1000
+    	emit globalStart : globalStart(start)
+	}
+}
+
+QActor firefly context ctxfirefly dynamicOnly {
+    [#
+       var X = 0
+       var Y = 0
+       var Timer = java.util.Random().nextLong(2000L,4000L)
+       var StartingMillis = 0L
+       var ShouldSync = false
+
+	    fun setCellCoords( )  {
+     		val coords = name.replace("firefly_","").split("_")   
+     		X  = coords[0].toInt()
+     		Y  = coords[1].toInt()
+  		}
+
+       fun checkSyncTime() : Boolean {
+           return System.currentTimeMillis() - StartingMillis >= 10000L
+       }
+    #]
+
+    State s0 initial {
+        [#
+        	setCellCoords()
+          	StartingMillis = System.currentTimeMillis()
+         #]
+        println("$name | coord=($X,0) Timer=$Timer") color magenta
+    }
+    Transition t0
+    	whenEvent globalStart -> flashON
+
+    // INDEPENDENT BLINKING (first 10 seconds)
+    State flashON {
+        println("$name | [IND] ON") color cyan
+        forward griddisplay -m cellstate : cellstate($X, 0, 1)
+        [# ShouldSync = checkSyncTime() #]
+        if [# ShouldSync #] {
+            autodispatch synch_up : synch_up(synch)
+        }
+    }
+    Transition t0
+        whenTimeVar Timer -> flashOFF
+        whenMsg synch_up -> startSync
+
+    State flashOFF {
+        println("$name | [IND] OFF") color cyan
+        forward griddisplay -m cellstate : cellstate($X, 0, 0)
+        [# ShouldSync = checkSyncTime() #]
+        if [# ShouldSync #] {
+            autodispatch synch_up : synch_up(synch)
+        }
+    }
+    Transition t0
+        whenTimeVar Timer -> flashON
+        whenMsg synch_up -> startSync
+
+    // TRANSITION TO SYNCH MODE ------------------------------------------------------------------------------------
+    State startSync {
+        println("$name | entering SYNC mode") color blue
+        // flash ON and broadcast our timer to all peers
+        forward griddisplay -m cellstate : cellstate($X, 0, 1)
+        emit outerFlash : outerFlash($Timer)
+    }
+    Transition t0
+        whenTimeVar Timer -> flashOFFSync
+
+    // SYNCED BLINKING ----------------------------------------------------------------------------------------------
+    State flashONSync {
+        println("$name | [SYNC] ON  Timer=$Timer") color magenta
+        forward griddisplay -m cellstate : cellstate($X, 0, 1)
+        emit outerFlash : outerFlash($Timer)
+    }
+    Transition t0
+        whenTimeVar Timer -> flashOFFSync
+
+    State flashOFFSync {
+        println("$name | [SYNC] OFF Timer=$Timer") color magenta
+        forward griddisplay -m cellstate : cellstate($X, 0, 0)
+    }
+    Transition t0
+        whenTimeVar Timer -> flashONSync
+        whenEvent outerFlash -> absorbWhileOFF
+
+    State absorbWhileOFF {
+    	println("[$name] absorbing") color yellow
+        onMsg( outerFlash : outerFlash(T) ) {
+            [#
+                val incomingTimer = payloadArg(0).toString().toLong()
+                println("$incomingTimer < $Timer ?")
+                if (incomingTimer < Timer) {
+                    Timer = incomingTimer
+                    println("$name | adopted faster timer: $Timer")
+                }
+            #]
+        }
+    }
+    Goto flashONSync
+}
+
