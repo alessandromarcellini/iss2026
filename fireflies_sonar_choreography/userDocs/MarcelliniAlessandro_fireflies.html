@@ -208,7 +208,7 @@ div.imagedesc{
 
 
    
-<title>Lucciole con Orchestratore 10s</title></head>
+<title>Lucciole con Coreografia Sonar</title></head>
     
 <!--
 	<body onload="loadNav();">
@@ -249,9 +249,9 @@ div.imagedesc{
 
     <ul>
         <li>Dopo 10 secondi le lucciole devono lampeggiare in modo sincronizzato;</li>
-        <!-- <li>Il sistema è dotato anche di un sonar . Quando il sonar rileva un ostacolo a una distanza minore di una distanza
+        <li>Il sistema è dotato anche di un sonar . Quando il sonar rileva un ostacolo a una distanza minore di una distanza
     prefissata DMIN, le lucciole devono lampeggiare in modo sincronizzato. Quando la distanza dell’ostacolo
-    (ri)supera DMIN, le lucciole tornano a lampeggiare in modo random</li> -->
+    (ri)supera DMIN, le lucciole tornano a lampeggiare in modo random</li>
     </ul>
 </div>
 
@@ -262,20 +262,23 @@ div.imagedesc{
     Cosa intente il committente per lucciole? Intende entità che lampeggiano ad intervalli variabili.
 
 	Il programma deve simulare un totale di 3 lucciole. <br>
-    Le lucciole devono essere rappresentate da dei qactor, che lampeggino inizialmente con periodi casuali e che man mano si sincronizzino allo stesso periodo finale. <br>
-	Il risultato della sincronizzazione deve essere raggiunto dopo 10 secondi esatti. <br><br>
+    Le lucciole devono essere rappresentate da dei qactor, che lampeggino inizialmente con periodi casuali e che si sincronizzino se necessario. <br>
+	Il risultato della sincronizzazione deve essere raggiunto quando la distanza misurata dal sonar è inferiore a DMIN. <br><br>
 
-	Per permetterne la sincronizzazione dopo 10 secondi esistono vari approcci, quello che useremo è l'approccio ad <span style="font-weight: bold;">orchestratore</span>. <br><br>
-	Scegliamo l'approccio ad orchestratore in quanto <span style="font-weight: bold;">semplice da realizzare </span> e <span style="font-weight: bold;">facilmente scalabile </span>. Questo introdurrà un single point of failure del sistema e un possibile sovraccarico di messaggi verso l'orchestratore, entrambi problemi facilmente risolvibili tramite <span style="font-weight: bold;"> replicazione e partitioning dei messaggi</span>. 
+	Per permetterne la sincronizzazione tra le lucciole esistono vari approcci, quello che useremo è l'approccio a <span style="font-weight: bold;">coreografia</span>. <br><br>
+	Scegliamo l'approccio a coreografia in quanto seppur <span style="font-weight: bold;">complesso da realizzare </span> è anche il più <span style="font-weight: bold;">attinente alla realtà </span> e, soprattutto, permette di avere un <span style="font-weight: bold;"> sistema fault tollerant, senza single point of failure.</span>. 
     
     <br>
 	<br>
 	    I <span style="font-weight: bold;">messaggi</span> scambiati nel sistema sono definiti come segue:
     <div class="code">
 		<pre>
-Dispatch cellstate : cellstate(X, Y, COLOR) // per il visualizzatore
-Dispatch shareFrequency : shareFrequency(Frequency) // permette alle lucciole di inviare la propria frequenza all'orchestratore
-Event sync : sync(CurrBestMillis) // emesso dall'orchestratore per dire alle lucciole che è il momento di sincronizzarsi
+Event globalStart : globalStart(start) // emitted from creator in order to make all the fireflies start at the same time
+Dispatch cellstate : cellstate(X, Y, COLOR) // forwarded from firefly to the visualizer
+Dispatch synch_up : synch_up(synch) // autodispatch to start synching with the others
+Event outerFlash : outerFlash(T) // emitted from firefly to notify the others that the firefly has blinked
+Event measureInsufficient : measureInsufficient(s) // emitted from sonar to make the fiflies unsync
+Event measureSufficient : measureSufficient(s) // emitted from sonar to make the fiflies sync
        </pre>
 	</div>
 	<br>
@@ -286,109 +289,128 @@ Event sync : sync(CurrBestMillis) // emesso dall'orchestratore per dire alle luc
     Il comportamento di una <span style="font-weight: bold;">lucciola</span> è rappresentato dal seguente qactor:
 	<div class="code">
 		<pre>
-QActor firefly context ctxfirefly dynamicOnly { // dynamicOnly significa che questo attore può essere istanziato solo da un altro attore
-	[# 
-	var  X          = 0
-	var  Y          = 0
-	var Timer       = java.util.Random().nextLong(2000L,4000L )
-	var CycleStartMillis = 0L
-	var ExceedingMillis = 0L
-	
-		fun setCellCoords( )  {
-			val coords = name.replace("firefly_","").split("_")   
-			X  = coords[0].toInt()
-			Y  = coords[1].toInt()
-		}		
-	#] 
-	
-	State s0 initial {
-		[# setCellCoords( )                                   #]
-		println("$name | X=$X Y=$Y  SharedTimer=$Timer") color magenta
-		// Invio della propria frequenza all'orchestratore
-		forward fireflies_orchestrator -m shareFrequency : shareFrequency($Timer)
-	}
-	Transition t0
-		whenTimeVar Timer -> flashON
-	
-	State flashON {
-	[# CycleStartMillis = System.currentTimeMillis() #]
-	println("[$name] ON") color magenta
-	forward griddisplay -m cellstate : cellstate($X, $Y, 1)
-}
-	Transition t0
-		whenTimeVar Timer -> flashOFF
-		whenEvent sync -> changeTimer
-	
-	State flashOFF {
-		println("[$name] OFF") color magenta
-		forward griddisplay -m cellstate : cellstate($X, $Y, 0)
-	}
-	Transition t0
-		whenTimeVar Timer -> flashON
-		whenEvent sync -> changeTimer
-	
+QActor firefly context ctxfirefly dynamicOnly {
+    [#
+       var X = 0
+       var Y = 0
+       var Timer = java.util.Random().nextLong(2000L,4000L)
+       var SyncTimer = Timer
 
-	State changeTimer {
-		println("[$name] changing timer!") color blue
-		onMsg( sync : sync(CurrBestMillis) ) {
-			[#
-				Timer = payloadArg(0).toString().toLong()
-			#]
-		}
-	}
-	Goto flashON
+	    fun setCellCoords( )  {
+     		val coords = name.replace("firefly_","").split("_")   
+     		X  = coords[0].toInt()
+     		Y  = coords[1].toInt()
+  		}
+    #]
+
+    State s0 initial {
+        [#
+        	setCellCoords()
+         #]
+        println("$name | coord=($X,0) Timer=$Timer") color magenta
+    }
+    Transition t0
+    	whenEvent globalStart -> flashON
+
+    // INDEPENDENT BLINKING
+    State flashON {
+        println("$name | [IND] ON") color cyan
+        forward griddisplay -m cellstate : cellstate($X, 0, 1)
+    }
+    Transition t0
+        whenTimeVar Timer -> flashOFF
+    	whenEvent measureSufficient -> startSync
+
+    State flashOFF {
+        println("$name | [IND] OFF") color cyan
+        forward griddisplay -m cellstate : cellstate($X, 0, 0)
+    }
+    Transition t0
+        whenTimeVar Timer -> flashON
+        whenEvent measureSufficient -> startSync
+
+    // TRANSITION TO SYNCH MODE ------------------------------------------------------------------------------------
+    State startSync {
+        println("$name | entering SYNC mode") color blue
+        // flash ON and broadcast our timer to all peers
+        forward griddisplay -m cellstate : cellstate($X, 0, 1)
+        emit outerFlash : outerFlash($Timer)
+    }
+    Transition t0
+        whenTimeVar Timer -> flashOFFSync
+
+    // SYNCED BLINKING ----------------------------------------------------------------------------------------------
+    State flashONSync {
+        println("$name | [SYNC] ON  Timer=$Timer") color magenta
+        forward griddisplay -m cellstate : cellstate($X, 0, 1)
+        emit outerFlash : outerFlash($Timer)
+    }
+    Transition t0
+        whenTimeVar SyncTimer -> flashOFFSync
+        whenEvent measureInsufficient -> flashOFF
+
+    State flashOFFSync {
+        println("$name | [SYNC] OFF Timer=$Timer") color magenta
+        forward griddisplay -m cellstate : cellstate($X, 0, 0)
+    }
+    Transition t0
+        whenTimeVar SyncTimer -> flashONSync
+        whenEvent outerFlash -> absorbWhileOFF
+        whenEvent measureInsufficient -> flashON
+
+    State absorbWhileOFF {
+    	println("[$name] absorbing") color yellow
+        onMsg( outerFlash : outerFlash(T) ) {
+            [#
+                val incomingTimer = payloadArg(0).toString().toLong()
+                println("$incomingTimer < $SyncTimer ?")
+                if (incomingTimer < SyncTimer) {
+                    SyncTimer = incomingTimer
+                    println("$name | adopted faster timer: $SyncTimer")
+                }
+            #]
+        }
+    }
+    Goto flashONSync
 }
 		</pre>
 	</div>
+    Mentre il <span style="font-weight: bold;">sonar</span> è rappresentato dal seguente modello:
 
-	Il comportamento dell'<span style="font-weight: bold;">orchestratore</span> è definito con il seguente modello:
-		<div class="code">
-			<pre>
-QActor fireflies_orchestrator context ctxfirefly {
+    <div class="code">
+        <pre>
+QActor sonar context ctxfirefly {
 	[#
-		var CurrBestMillis = 0L	
+		var  TimerUntilNextToggle = 0L
+		
 	#]
-	
 	State s0 initial {
-		println("[ORCHESTRATOR] Started") color blue
+		println("[SONAR] ready!") color yellow
 	}
-	Goto orchestrate
+	Goto measureInsufficient
 	
-	State orchestrate {		
-		// deve ricevere messaggi dalle varie lucciole e stabilire quale è il T
-		println("[ORCHESTRATOR] ready to accept messages") color blue
+	State measureInsufficient {
+		[# TimerUntilNextToggle = java.util.Random().nextLong(10000L,20000L ) #]
+		println("[SONAR] Measure Insufficient, next sufficient will be at $TimerUntilNextToggle") color yellow
+		emit measureInsufficient : measureInsufficient(s)
 	}
 	Transition t0
-		whenTime 10000 -> sync
-		whenMsg shareFrequency -> evaluateNewFrequency
+		whenTimeVar TimerUntilNextToggle -> measureSufficient
 	
-	State evaluateNewFrequency {
-		onMsg( shareFrequency : shareFrequency(Frequency) ) {
-			// controlla se la frequenza è migliore ed in caso cambiala
-			[#
-				var OuterTimer = payloadArg(0).toString().toLong()
-				println("[ORCHESTRATOR] evaluating new T: $OuterTimer")
-				if (OuterTimer < CurrBestMillis || CurrBestMillis == 0L) {
-					CurrBestMillis = OuterTimer
-				}
-			#]
-		}
+	State measureSufficient {
+		[# TimerUntilNextToggle = java.util.Random().nextLong(10000L,20000L ) #]
+		println("[SONAR] Measure Sufficient, next insufficient will be at $TimerUntilNextToggle") color yellow
+		emit measureSufficient : measureSufficient(s)
 	}
-	Goto orchestrate
-	
-	State sync {
-		emit sync : sync($CurrBestMillis)
-	}
+	Transition t0
+		whenTimeVar TimerUntilNextToggle -> measureInsufficient
 }
-			</pre>
-		</div>
-		<br>
-		<br>
-		Per vedere il modello completo <a href="https://github.com/alessandromarcellini/iss2026/blob/main/fireflies_orchestrator/src/fireflies_orchestrator.qak" target="_blank" style="font-weight: bold;" >clicca qui</a>
-	
+        </pre>
+    </div>
 
-
-
+	<br>
+	<br>
+		Per vedere il modello completo <a href="https://github.com/alessandromarcellini/iss2026/blob/main/fireflies_sonar_choreography/src/fireflies.qak" target="_blank" style="font-weight: bold;" >clicca qui</a>
 </div>
  
 

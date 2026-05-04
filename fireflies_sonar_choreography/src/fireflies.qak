@@ -1,0 +1,154 @@
+System fireflysynch
+
+
+Event globalStart : globalStart(start) // emitted from creator in order to make all the fireflies start at the same time
+
+Dispatch cellstate : cellstate(X, Y, COLOR) // forwarded from firefly to the visualizer
+Dispatch synch_up : synch_up(synch) // autodispatch to start synching with the others
+Event outerFlash : outerFlash(T) // emitted from firefly to notify the others that the firefly has blinked
+Event measureInsufficient : measureInsufficient(s) // emitted from sonar to make the fiflies unsync
+Event measureSufficient : measureSufficient(s) // emitted from sonar to make the fiflies sync
+
+
+Context ctxfirefly ip [host="localhost" port=8040]
+Context ctxgrid ip [host="127.0.0.1" port=8050 ] // definisco il contesto in cui vive il visualizzatore (l'infrastruttura si preoccuperebbe se anche qua mettessimo localhost perchè ogni contesto deve avere domain diverso)
+// nota che le porte devono essere diverse essendo entrambi i context su localhost
+
+
+ExternalQActor griddisplay context ctxgrid // definisco un attore esterno nel contesto esterno (è un attore nel qak del progetto griddisplay)
+
+QActor creator context ctxfirefly{
+	State s0 initial{    
+   	 	[#   
+		 clearlog("./logs/app_actorgrid.log") 	//vedi src/main/resources/logback.xml
+	 	#]
+		delay 500 
+//		[# logger.info(  "${currentState.stateName} creates 25 firefly "  ) #]
+		[#
+	    	for( i in 0..2 ){
+	    		for( j in 0..0 ){
+	    			CommUtils.outcyan("$name | CREATES firefly_${i}_${j}")  
+	    			createActorDynamically( "firefly", "_${i}_${j}", false)
+	    		}
+	    	}		 
+    	#]
+    	delay 1000
+    	emit globalStart : globalStart(start)
+	}
+}
+
+
+QActor sonar context ctxfirefly {
+	[#
+		var  TimerUntilNextToggle = 0L
+		
+	#]
+	State s0 initial {
+		println("[SONAR] ready!") color yellow
+	}
+	Goto measureInsufficient
+	
+	State measureInsufficient {
+		[# TimerUntilNextToggle = java.util.Random().nextLong(10000L,20000L ) #]
+		println("[SONAR] Measure Insufficient, next sufficient will be at $TimerUntilNextToggle") color yellow
+		emit measureInsufficient : measureInsufficient(s)
+	}
+	Transition t0
+		whenTimeVar TimerUntilNextToggle -> measureSufficient
+	
+	State measureSufficient {
+		[# TimerUntilNextToggle = java.util.Random().nextLong(10000L,20000L ) #]
+		println("[SONAR] Measure Sufficient, next insufficient will be at $TimerUntilNextToggle") color yellow
+		emit measureSufficient : measureSufficient(s)
+	}
+	Transition t0
+		whenTimeVar TimerUntilNextToggle -> measureInsufficient
+}
+
+
+
+QActor firefly context ctxfirefly dynamicOnly {
+    [#
+       var X = 0
+       var Y = 0
+       var Timer = java.util.Random().nextLong(2000L,4000L)
+       var SyncTimer = Timer
+
+	    fun setCellCoords( )  {
+     		val coords = name.replace("firefly_","").split("_")   
+     		X  = coords[0].toInt()
+     		Y  = coords[1].toInt()
+  		}
+    #]
+
+    State s0 initial {
+        [#
+        	setCellCoords()
+         #]
+        println("$name | coord=($X,0) Timer=$Timer") color magenta
+    }
+    Transition t0
+    	whenEvent globalStart -> flashON
+
+    // INDEPENDENT BLINKING
+    State flashON {
+        println("$name | [IND] ON") color cyan
+        forward griddisplay -m cellstate : cellstate($X, 0, 1)
+    }
+    Transition t0
+        whenTimeVar Timer -> flashOFF
+    	whenEvent measureSufficient -> startSync
+
+    State flashOFF {
+        println("$name | [IND] OFF") color cyan
+        forward griddisplay -m cellstate : cellstate($X, 0, 0)
+    }
+    Transition t0
+        whenTimeVar Timer -> flashON
+        whenEvent measureSufficient -> startSync
+
+    // TRANSITION TO SYNCH MODE ------------------------------------------------------------------------------------
+    State startSync {
+        println("$name | entering SYNC mode") color blue
+        // flash ON and broadcast our timer to all peers
+        forward griddisplay -m cellstate : cellstate($X, 0, 1)
+        emit outerFlash : outerFlash($Timer)
+    }
+    Transition t0
+        whenTimeVar Timer -> flashOFFSync
+
+    // SYNCED BLINKING ----------------------------------------------------------------------------------------------
+    State flashONSync {
+        println("$name | [SYNC] ON  Timer=$Timer") color magenta
+        forward griddisplay -m cellstate : cellstate($X, 0, 1)
+        emit outerFlash : outerFlash($Timer)
+    }
+    Transition t0
+        whenTimeVar SyncTimer -> flashOFFSync
+        whenEvent measureInsufficient -> flashOFF
+
+    State flashOFFSync {
+        println("$name | [SYNC] OFF Timer=$Timer") color magenta
+        forward griddisplay -m cellstate : cellstate($X, 0, 0)
+    }
+    Transition t0
+        whenTimeVar SyncTimer -> flashONSync
+        whenEvent outerFlash -> absorbWhileOFF
+        whenEvent measureInsufficient -> flashON
+
+    State absorbWhileOFF {
+    	println("[$name] absorbing") color yellow
+        onMsg( outerFlash : outerFlash(T) ) {
+            [#
+                val incomingTimer = payloadArg(0).toString().toLong()
+                println("$incomingTimer < $SyncTimer ?")
+                if (incomingTimer < SyncTimer) {
+                    SyncTimer = incomingTimer
+                    println("$name | adopted faster timer: $SyncTimer")
+                }
+            #]
+        }
+    }
+    Goto flashONSync
+}
+

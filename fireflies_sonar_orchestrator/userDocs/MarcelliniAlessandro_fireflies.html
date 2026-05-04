@@ -208,7 +208,7 @@ div.imagedesc{
 
 
    
-<title>Lucciole con Orchestratore 10s</title></head>
+<title>Lucciole con Orchestratore Sonar</title></head>
     
 <!--
 	<body onload="loadNav();">
@@ -262,8 +262,8 @@ div.imagedesc{
     Cosa intente il committente per lucciole? Intende entità che lampeggiano ad intervalli variabili.
 
 	Il programma deve simulare un totale di 3 lucciole. <br>
-    Le lucciole devono essere rappresentate da dei qactor, che lampeggino inizialmente con periodi casuali e che man mano si sincronizzino allo stesso periodo finale. <br>
-	Il risultato della sincronizzazione deve essere raggiunto dopo 10 secondi esatti. <br><br>
+    Le lucciole devono essere rappresentate da dei qactor, che lampeggino inizialmente con periodi casuali e che si sincronizzino se necessario. <br>
+	Il risultato della sincronizzazione deve essere raggiunto quando la distanza misurata dal sonar è inferiore a DMIN. <br><br>
 
 	Per permetterne la sincronizzazione dopo 10 secondi esistono vari approcci, quello che useremo è l'approccio ad <span style="font-weight: bold;">orchestratore</span>. <br><br>
 	Scegliamo l'approccio ad orchestratore in quanto <span style="font-weight: bold;">semplice da realizzare </span> e <span style="font-weight: bold;">facilmente scalabile </span>. Questo introdurrà un single point of failure del sistema e un possibile sovraccarico di messaggi verso l'orchestratore, entrambi problemi facilmente risolvibili tramite <span style="font-weight: bold;"> replicazione e partitioning dei messaggi</span>. 
