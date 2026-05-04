@@ -1,0 +1,502 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <!--
+<link rel="stylesheet" type="text/css" href="../css/issStyle1.css">
+<script type="text/javascript" src="../css/issStyle.js"></script>
+-->
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/foundation-sites@6.7.4/dist/css/foundation.min.css" crossorigin="anonymous">
+		<script src="https://cdn.jsdelivr.net/npm/foundation-sites@6.7.4/dist/js/foundation.min.js"crossorigin="anonymous"></script> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="./commons/resources/styles/templateISS.css">
+        <link rel="stylesheet" type="text/css" href="./commons/resources/styles/main.css">
+        <link rel="stylesheet" type="text/css" href="./commons/resources/styles/navbar.css">
+        <link rel="stylesheet" type="text/css" href="./commons/resources/styles/table.css">
+        <link rel="stylesheet" type="text/css" href="./commons/resources/styles/code.css">
+        <!-- <script type="text/javascript" src="./commons/resources/scripts/myScripts.js"></script> -->
+<style type="text/css">
+body
+{
+    margin-left:  30px;
+    margin-right: 30px;
+};
+
+P
+{
+    font-family: Tahoma;
+    font-size: 10pt;
+};
+
+a, a:visited, a:active, a:link, a:hover {
+    text-decoration: underline;
+    color: #545454;
+    background-color: transparent;
+	font-size: 93%;
+}
+
+a:hover {
+    background-color: #cccccc;
+}
+
+
+hr {
+    clear: both;
+    height: 1px;
+    color: #242424;
+    background-color: transparent;
+}
+
+h1, h2, h3 {
+    color: #242424;
+    clear: left;
+    font: 100% Tahoma, Helvetica, Arial, sans-serif;
+    margin-bottom: 0.5em;
+    padding-top: 0.5em;
+	border-radius: 10px;
+	padding: 5px;
+}
+
+top {
+	width: 100%;
+}
+
+
+#i {
+    color: #ff1010;
+}
+tt{
+	font-family: "Arial";
+    font-size: 90%;
+	color: #006600;
+}
+em{
+	font-family: "Arial";
+    font-size: 80%;
+	font-weight: bold;
+	border-style:solid;
+	border-color: #abe876;
+    color: #1632cc;
+}
+bc{
+	font-family: "Arial";
+	font-size: 90%;
+	font-weight: bold;
+    color: #990000;
+	background-color: #fcf8c7;
+}
+ks{
+	font-family: "Arial";
+	font-weight: bold;
+    color: #0000CD	;
+	font-size: 90%;
+}
+kc{
+	font-family: "Arial";
+	font-weight: bold;
+    color: #008000	;
+	font-size: 90%;
+}
+pre{
+	font-family: "Consolas";
+	font-size: 85%;
+	background-color: #f5f5f5;
+	border: 1.5px solid silver;
+	padding: 5px;
+}
+m{
+	font-family: "Helvetica";
+	line-height: 100%;
+ 	font-size: 75%;
+}
+div.body{
+	 
+    font-size: 18px;
+}
+k{
+    color: #990000;
+	font-weight: bold;
+	font-size: 90%;
+}
+h1 {
+    font-size: 150%;
+    background-color: #b2c0ff;
+	padding: 10px;
+}
+
+h2 {
+    background-color: #9ed8ff;
+    font-size: 130%;
+}
+
+h3 {
+	background-color: #e6ccff;
+    font-size: 100%;
+}
+h4 {
+    background-color: #ccffcc;
+    font-size: 100%;
+	width: 95%;
+	border-radius: 5px;
+	padding: 2px;
+}
+h5 {
+    background-color: #d5ffb0;
+    font-size: 100%;
+
+}
+div.req{
+	background-color: #d9ffb3;
+    font-size: 18px;
+	width: 700px;
+    border: 3px solid green;
+    padding: 15px;
+    margin: 10px;
+}
+div.remark{
+	background-color: #E3F2FD;
+    border: 1.5px solid #d5f2ed;
+    padding: 15px;
+    margin: 10px;
+	border-radius: 25px;
+}
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+ol, ul, li {
+  margin: 0;
+  margin-left: 10px;
+  padding: 0;
+  padding-bottom: 5px;
+}
+
+table, th, td {
+	border: 1px solid black;
+}
+
+img {
+	border: 1.5px solid #d5f2ed
+
+}
+
+a, a:visited, a:active, a:link, a:hover {
+    text-decoration: underline;
+    color: #545454;
+    background-color: transparent;
+}
+
+div.wrapdesc{
+	width: 90%;
+	margin: auto;
+}
+
+div.imagedesc{
+	width: 85%;
+	margin: auto;
+}
+
+
+</style>
+    
+ 
+   
+</head>
+	
+		
+  
+
+
+   
+<title>Lucciole con Orchestratore 10s</title></head>
+    
+<!--
+	<body onload="loadNav();">
+		<div id="openButton" class="openButton" onclick="openNav(true)">&#9776; Menu</div>
+		<div id="sidenav" class="sidenav">
+			<a class="closeButton" href="javascript:void(0)" onclick="closeNav(true)">&times;</a>
+			<a href=".README.html">ReadMe</a>
+			<a class="sprint" href="../../../Sprint0/Codice/userDocs/Cold%20Storage%20Service%20-%20Natali%20V3.html">Sprint0</a>
+			<a class="sprint" href="../../../Sprint1.0/Codice/userDocs/Sprint%201.0%20-%20V3.html">Sprint1.0</a>
+			<a class="sprint" href="../../../Sprint1.1/Codice/userDocs/Sprint%201.1%20-%20V3.html">Sprint1.1</a>
+			<a id="currentSprint" class="sprint" href="#">&#8211;&#8212; Sprint2 &#8212;&#8211;</a>
+			<div class="sidenavSection">
+				<a href="#Goal Sprint 2">Goal Sprint 2</a>
+				<a href="#Requisiti">Requisiti</a>
+				<a href="#Analisi dei Requisiti">Analisi dei Requisiti</a>
+				<a href="#Analisi del Problema">Analisi del Problema</a>
+				<a href="#Test Plan">Test Plan</a>
+				<a href="#Progettazione">Progettazione</a>
+				<a href="#Deployment">Deployment</a>
+			</div>
+			<p class="separator">&mdash;&mdash;&mdash;&ndash;&ndash;&mdash;&mdash;&mdash;</p>
+			<a class="sprint" href="../../../Sprint3/Codice/userDoc/Sprint%203.html">Sprint3</a>
+			<bottom-spacer/>
+		</div>
+-->
+<body>
+<div id="top">
+<h1>LABORATORIO DI INGEGNERIA DEI SISTEMI SOFTWARE <font size="5"></font> </h1>
+</div>  
+
+<div class="body"> 
+ 
+<h2>Requirements</h2>
+ 
+<div class="remark">
+    Costruire il simulatore di un sistema costituito da 3 lucciole. Inizialemente, le lucciole lampeggiamo ciascuna con una
+    frequenza (costante) propria.
+
+    <ul>
+        <li>Dopo 10 secondi le lucciole devono lampeggiare in modo sincronizzato;</li>
+        <li>Il sistema è dotato anche di un sonar . Quando il sonar rileva un ostacolo a una distanza minore di una distanza
+    prefissata DMIN, le lucciole devono lampeggiare in modo sincronizzato. Quando la distanza dell’ostacolo
+    (ri)supera DMIN, le lucciole tornano a lampeggiare in modo random</li>
+    </ul>
+</div>
+
+ 
+
+<h2>Requirement analysis</h2>
+<div class="remark">
+    Cosa intente il committente per lucciole? Intende entità che lampeggiano ad intervalli variabili.
+
+	Il programma deve simulare un totale di 3 lucciole. <br>
+    Le lucciole devono essere rappresentate da dei qactor, che lampeggino inizialmente con periodi casuali e che man mano si sincronizzino allo stesso periodo finale. <br>
+	Il risultato della sincronizzazione deve essere raggiunto dopo 10 secondi esatti. <br><br>
+
+	Per permetterne la sincronizzazione dopo 10 secondi esistono vari approcci, quello che useremo è l'approccio ad <span style="font-weight: bold;">orchestratore</span>. <br><br>
+	Scegliamo l'approccio ad orchestratore in quanto <span style="font-weight: bold;">semplice da realizzare </span> e <span style="font-weight: bold;">facilmente scalabile </span>. Questo introdurrà un single point of failure del sistema e un possibile sovraccarico di messaggi verso l'orchestratore, entrambi problemi facilmente risolvibili tramite <span style="font-weight: bold;"> replicazione e partitioning dei messaggi</span>. 
+    
+    <br>
+	<br>
+	    I <span style="font-weight: bold;">messaggi</span> scambiati nel sistema sono definiti come segue:
+    <div class="code">
+		<pre>
+Dispatch cellstate : cellstate(X, Y, COLOR) // per il visualizzatore
+Dispatch shareFrequency : shareFrequency(Frequency) // permette alle lucciole di inviare la propria frequenza all'orchestratore
+Dispatch measureInsufficient : measureInsufficient(s) // inviato dal sonar all'orchestratore per fargli sapere che la distanza registrata ha superato quella attesa
+Dispatch measureSufficient : measureSufficient(s) // inviato dal sonar all'orchestratore per fargli sapere che la distanza registrata è minore di quella attesa
+Event sync : sync(CurrBestMillis) // emesso dall'orchestratore per dire alle lucciole che è il momento di sincronizzarsi
+Event unsync : unsync(unsync) // emesso dall'orchestratore per dire alle lucciole che è il momento di smettere di sincronizzarsi
+       </pre>
+	</div>
+	<br>
+
+    
+
+
+    Il comportamento di una <span style="font-weight: bold;">lucciola</span> è rappresentato dal seguente modello:
+	<div class="code">
+		<pre>
+QActor firefly context ctxfirefly dynamicOnly { // dynamicOnly significa che questo attore può essere istanziato solo da un altro attore
+	[# 
+	   var  X          = 0
+	   var  Y          = 0
+	   var Timer       = java.util.Random().nextLong(2000L,4000L )
+	   var OrchestratorTimer = 0L
+	   var ExceedingMillis = 0L
+	   
+	    fun setCellCoords( )  {
+     		val coords = name.replace("firefly_","").split("_")   
+     		X  = coords[0].toInt()
+     		Y  = coords[1].toInt()
+  		}		
+ 	#] 
+	
+	State s0 initial {
+		[# setCellCoords( )                                   #]
+		println("$name | X=$X Y=$Y  SharedTimer=$Timer") color magenta
+		// Invio della propria frequenza all'orchestratore
+		forward fireflies_orchestrator -m shareFrequency : shareFrequency($Timer)
+	}
+	Transition t0
+		whenTimeVar Timer -> flashON
+	
+	State flashON {
+		println("[$name] IND ON") color cyan
+	    forward griddisplay -m cellstate : cellstate($X, $Y, 1)
+	}
+	Transition t0
+	    whenTimeVar Timer -> flashOFF
+	    whenEvent sync -> changeTimer
+	
+	State flashOFF {
+		println("[$name] IND OFF") color cyan
+	    forward griddisplay -m cellstate : cellstate($X, $Y, 0)
+	}
+	Transition t0
+	    whenTimeVar Timer -> flashON
+	    whenEvent sync -> changeTimer
+	
+	// Sync up the fireflies
+	State changeTimer {
+	    println("[$name] changing timer!") color blue
+	    onMsg( sync : sync(CurrBestMillis) ) {
+	        [#
+	            OrchestratorTimer = payloadArg(0).toString().toLong()
+	        #]
+	    }
+	}
+	Goto flashONSync
+	
+	State flashONSync {
+		println("[$name] SYNC ON") color magenta
+	    forward griddisplay -m cellstate : cellstate($X, $Y, 1)
+	}
+	Transition t0
+	    whenTimeVar OrchestratorTimer -> flashOFFSync
+	    whenEvent unsync -> flashOFF
+	
+	State flashOFFSync {
+		println("[$name] SYNC OFF") color magenta
+	    forward griddisplay -m cellstate : cellstate($X, $Y, 0)
+	}
+	Transition t0
+	    whenTimeVar OrchestratorTimer -> flashONSync
+	    whenEvent unsync -> flashON
+}
+		</pre>
+	</div>
+
+	Il comportamento dell'<span style="font-weight: bold;">orchestratore</span> è definito con il seguente modello:
+		<div class="code">
+			<pre>
+QActor fireflies_orchestrator context ctxfirefly {
+	[#
+		var CurrBestMillis = 0L	
+	#]
+	
+	State s0 initial {
+		println("[ORCHESTRATOR] Started") color blue
+	}
+	Goto orchestrate
+	
+	State orchestrate {
+		// deve ricevere messaggi dalle varie lucciole e stabilire quale è il T
+		println("[ORCHESTRATOR] ready to accept messages") color blue
+	}
+	Transition t0
+		whenMsg shareFrequency -> evaluateNewFrequency
+		whenMsg measureSufficient -> sync
+		whenMsg measureInsufficient -> unsync
+	
+	State evaluateNewFrequency {
+		onMsg( shareFrequency : shareFrequency(Frequency) ) {
+			// controlla se la frequenza è migliore ed in caso cambiala
+			[#
+	            var OuterTimer = payloadArg(0).toString().toLong()
+	            println("[ORCHESTRATOR] evaluating new T: $OuterTimer")
+	            if (OuterTimer < CurrBestMillis || CurrBestMillis == 0L) {
+	            	CurrBestMillis = OuterTimer
+	            }
+	        #]
+		}
+	}
+	Goto orchestrate
+	
+	State sync {
+		println("[ORCHESTRATOR] EMITTING SYNC") color blue
+		emit sync : sync($CurrBestMillis)
+	}
+	Goto orchestrate
+	
+	State unsync {
+		println("[ORCHESTRATOR] EMITTING UNSYNC") color blue
+		emit unsync : unsync(unsync)
+	}
+	Goto orchestrate
+}
+			</pre>
+		</div>
+
+Il <span style="font-weight: bold;">sonar </span> è invece rappresentato dal seguente modello:
+		<div class="code">
+			<pre>
+QActor sonar context ctxfirefly {
+	[#
+		var  TimerUntilNextToggle = 0L
+		
+	#]
+	State s0 initial {
+		println("[SONAR] ready!") color yellow
+	}
+	Goto measureInsufficient
+	
+	State measureInsufficient {
+		[# TimerUntilNextToggle = java.util.Random().nextLong(10000L,20000L ) #]
+		println("[SONAR] Measure Insufficient, next sufficient will be at $TimerUntilNextToggle") color yellow
+		forward fireflies_orchestrator -m measureInsufficient : measureInsufficient(s)
+	}
+	Transition t0
+		whenTimeVar TimerUntilNextToggle -> measureSufficient
+	
+	State measureSufficient {
+		[# TimerUntilNextToggle = java.util.Random().nextLong(10000L,20000L ) #]
+		println("[SONAR] Measure Sufficient, next insufficient will be at $TimerUntilNextToggle") color yellow
+		forward fireflies_orchestrator -m measureSufficient : measureSufficient(s)
+	}
+	Transition t0
+		whenTimeVar TimerUntilNextToggle -> measureInsufficient
+}
+			</pre>
+		</div>
+		<br>
+		<br>
+		Per vedere il modello completo <a href="https://github.com/alessandromarcellini/iss2026/blob/main/fireflies_sonar_orchestrator/src/fireflies.qak" target="_blank" style="font-weight: bold;" >clicca qui</a>
+	
+
+
+
+</div>
+ 
+
+ 
+
+<h2>Problem analysis</h2>
+ 
+
+<h2>Test plans</h2>
+	
+<div class="code">
+
+
+
+</div>
+
+
+
+
+<h2>Project</h2> 
+ 
+ 
+
+<h2>Testing</h2> 
+ 
+
+<h2>Deployment</h2> 
+
+ 
+<h2>Maintenance</h2> 
+ 
+<!-- USEFUL
+<table style="width:100%" border="1">
+<tr>
+<td style="width:50%">
+</td>
+<td></td>
+</tr>
+</table>
+-->
+	      	
+<br/><br/> 	
+</div>  
+
+<div style="background-color:rgba(86, 56, 253, 0.9); width:100%;text-align:left;color:white">
+By Marcellini Alessandro email: alessandr.marcellin2@studio.unibo.it, 
+<!-- <img src="./img/mbot-S.jpg" alt="mbot" width="15%" height="15%"> -->
+<img src="./img/alessandro_marcellini.jpg" alt="emiglio" width="8%" height="8%">
+GIT repo: https://github.com/alessandromarcellini/iss2026
+</div> 
+</body>
+</html>

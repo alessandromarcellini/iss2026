@@ -1,0 +1,178 @@
+System firefly
+
+Dispatch cellstate : cellstate(X, Y, COLOR) // per il visualizzatore
+
+Dispatch shareFrequency : shareFrequency(Frequency) // permette alle lucciole di inviare la propria frequenza all'orchestratore
+Dispatch measureInsufficient : measureInsufficient(s) // inviato dal sonar all'orchestratore per fargli sapere che la distanza registrata ha superato quella attesa
+Dispatch measureSufficient : measureSufficient(s) // inviato dal sonar all'orchestratore per fargli sapere che la distanza registrata è minore di quella attesa
+Event sync : sync(CurrBestMillis) // emesso dall'orchestratore per dire alle lucciole che è il momento di sincronizzarsi
+Event unsync : unsync(unsync) // emesso dall'orchestratore per dire alle lucciole che è il momento di smettere di sincronizzarsi
+
+Context ctxfirefly ip [host="localhost" port=8040]
+Context ctxgrid ip [host="127.0.0.1" port=8050 ] // definisco il contesto in cui vive il visualizzatore (l'infrastruttura si preoccuperebbe se anche qua mettessimo localhost perchè ogni contesto deve avere domain diverso)
+// nota che le porte devono essere diverse essendo entrambi i context su localhost
+
+
+ExternalQActor griddisplay context ctxgrid // definisco un attore esterno nel contesto esterno (è un attore nel qak del progetto griddisplay)
+
+QActor creator context ctxfirefly {
+	State s0 initial{    
+   	 	[#   
+		 clearlog("./logs/app_actorgrid.log") 	//vedi src/main/resources/logback.xml
+	 	#]
+		delay 500 
+//		[# logger.info(  "${currentState.stateName} creates 3 firefly "  ) #]
+		[#
+	    	for( i in 0..2 ){
+	    		for( j in 0..0 ){
+	    			CommUtils.outcyan("$name | CREATES firefly_${i}_${j}")  
+	    			createActorDynamically( "firefly", "_${i}_${j}", false)
+	    		}
+	    	}		 
+    	#]
+	}
+}
+
+QActor sonar context ctxfirefly {
+	[#
+		var  TimerUntilNextToggle = 0L
+		
+	#]
+	State s0 initial {
+		println("[SONAR] ready!") color yellow
+	}
+	Goto measureInsufficient
+	
+	State measureInsufficient {
+		[# TimerUntilNextToggle = java.util.Random().nextLong(10000L,20000L ) #]
+		println("[SONAR] Measure Insufficient, next sufficient will be at $TimerUntilNextToggle") color yellow
+		forward fireflies_orchestrator -m measureInsufficient : measureInsufficient(s)
+	}
+	Transition t0
+		whenTimeVar TimerUntilNextToggle -> measureSufficient
+	
+	State measureSufficient {
+		[# TimerUntilNextToggle = java.util.Random().nextLong(10000L,20000L ) #]
+		println("[SONAR] Measure Sufficient, next insufficient will be at $TimerUntilNextToggle") color yellow
+		forward fireflies_orchestrator -m measureSufficient : measureSufficient(s)
+	}
+	Transition t0
+		whenTimeVar TimerUntilNextToggle -> measureInsufficient
+}
+
+
+QActor fireflies_orchestrator context ctxfirefly {
+	[#
+		var CurrBestMillis = 0L	
+	#]
+	
+	State s0 initial {
+		println("[ORCHESTRATOR] Started") color blue
+	}
+	Goto orchestrate
+	
+	State orchestrate {
+		// deve ricevere messaggi dalle varie lucciole e stabilire quale è il T
+		println("[ORCHESTRATOR] ready to accept messages") color blue
+	}
+	Transition t0
+		whenMsg shareFrequency -> evaluateNewFrequency
+		whenMsg measureSufficient -> sync
+		whenMsg measureInsufficient -> unsync
+	
+	State evaluateNewFrequency {
+		onMsg( shareFrequency : shareFrequency(Frequency) ) {
+			// controlla se la frequenza è migliore ed in caso cambiala
+			[#
+	            var OuterTimer = payloadArg(0).toString().toLong()
+	            println("[ORCHESTRATOR] evaluating new T: $OuterTimer")
+	            if (OuterTimer < CurrBestMillis || CurrBestMillis == 0L) {
+	            	CurrBestMillis = OuterTimer
+	            }
+	        #]
+		}
+	}
+	Goto orchestrate
+	
+	State sync {
+		println("[ORCHESTRATOR] EMITTING SYNC") color blue
+		emit sync : sync($CurrBestMillis)
+	}
+	Goto orchestrate
+	
+	State unsync {
+		println("[ORCHESTRATOR] EMITTING UNSYNC") color blue
+		emit unsync : unsync(unsync)
+	}
+	Goto orchestrate
+}
+
+
+
+QActor firefly context ctxfirefly dynamicOnly { // dynamicOnly significa che questo attore può essere istanziato solo da un altro attore
+	[# 
+	   var  X          = 0
+	   var  Y          = 0
+	   var Timer       = java.util.Random().nextLong(2000L,4000L )
+	   var OrchestratorTimer = 0L
+	   var ExceedingMillis = 0L
+	   
+	    fun setCellCoords( )  {
+     		val coords = name.replace("firefly_","").split("_")   
+     		X  = coords[0].toInt()
+     		Y  = coords[1].toInt()
+  		}		
+ 	#] 
+	
+	State s0 initial {
+		[# setCellCoords( )                                   #]
+		println("$name | X=$X Y=$Y  SharedTimer=$Timer") color magenta
+		// Invio della propria frequenza all'orchestratore
+		forward fireflies_orchestrator -m shareFrequency : shareFrequency($Timer)
+	}
+	Transition t0
+		whenTimeVar Timer -> flashON
+	
+	State flashON {
+		println("[$name] IND ON") color cyan
+	    forward griddisplay -m cellstate : cellstate($X, $Y, 1)
+	}
+	Transition t0
+	    whenTimeVar Timer -> flashOFF
+	    whenEvent sync -> changeTimer
+	
+	State flashOFF {
+		println("[$name] IND OFF") color cyan
+	    forward griddisplay -m cellstate : cellstate($X, $Y, 0)
+	}
+	Transition t0
+	    whenTimeVar Timer -> flashON
+	    whenEvent sync -> changeTimer
+	
+	// Sync up the fireflies
+	State changeTimer {
+	    println("[$name] changing timer!") color blue
+	    onMsg( sync : sync(CurrBestMillis) ) {
+	        [#
+	            OrchestratorTimer = payloadArg(0).toString().toLong()
+	        #]
+	    }
+	}
+	Goto flashONSync
+	
+	State flashONSync {
+		println("[$name] SYNC ON") color magenta
+	    forward griddisplay -m cellstate : cellstate($X, $Y, 1)
+	}
+	Transition t0
+	    whenTimeVar OrchestratorTimer -> flashOFFSync
+	    whenEvent unsync -> flashOFF
+	
+	State flashOFFSync {
+		println("[$name] SYNC OFF") color magenta
+	    forward griddisplay -m cellstate : cellstate($X, $Y, 0)
+	}
+	Transition t0
+	    whenTimeVar OrchestratorTimer -> flashONSync
+	    whenEvent unsync -> flashON
+}
