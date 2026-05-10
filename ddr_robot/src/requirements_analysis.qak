@@ -1,0 +1,83 @@
+System ddr
+
+Event currMeasure : currMeasure(CurrDistance)
+
+Event rotate : rotate(Degrees)
+Event move : move(Distance)
+
+Context ctxddr ip [host="localhost" port=8040] // contesto per il simulatore del robot e sonar
+
+QActor sonar context ctxddr {
+	[#
+		var  Timer = 0L // in ms
+		var  CurrDistance = 0.0
+		
+	#]
+	State s0 initial {
+		println("[SONAR] ready!") color yellow
+	}
+	Goto measure
+	
+	State measure {
+		[# CurrDistance = java.util.Random().nextDouble(0.0, 20.0) #] // campione distanza corrente
+		println("[SONAR] Current measure: $CurrDistance") color yellow
+		emit currMeasure : currMeasure($CurrDistance) // emissione evento a chi interessa con la misura
+	}
+	Transition t0
+		whenTimeVar Timer -> measure // ripeti al prossimo periodo
+}
+
+
+QActor robot context ctxddr {
+	[#
+		var BodyRadius = 2.0
+		
+		var CurrX = 0.0 // posizione in X
+		var CurrY = 0.0 // posizione in Y
+		var CurrRotationDegree = 0.0 // da 0 a 359.0
+		
+	#]
+	State s0 initial {
+		println("[DDR] ready!") color cyan
+	}
+	Goto waitCommand
+	
+	State waitCommand {
+		println("[DDR] waiting for commands!") color cyan
+	}
+	Transition t0
+		whenEvent rotate -> rotate
+		whenEvent move -> move
+	
+	State rotate {
+		onMsg(rotate : rotate(Degrees)) {
+			[#
+				var ReceivedDegrees = payloadArg(0).toString().toDouble()
+				
+				CurrRotationDegree = (CurrRotationDegree + ReceivedDegrees) % 360
+			#]
+			println("[DDR] rotated of $ReceivedDegrees") color cyan
+		}
+	}
+	Goto waitCommand
+	
+	State move {
+		onMsg(move : move(Distance)) {
+			[#
+				var ReceivedDistance = payloadArg(0).toString().toDouble()
+				
+				// converti gradi in radianti
+				val radians = Math.toRadians(CurrRotationDegree)
+				
+				// aggiorna posizione
+				CurrX += ReceivedDistance * kotlin.math.cos(radians)
+				CurrY += ReceivedDistance * kotlin.math.sin(radians)
+			#]
+			println("[DDR] moved of $ReceivedDistance, new current position: ($CurrX, $CurrY)") color cyan
+		}
+		
+	}
+	Goto waitCommand
+}
+
+

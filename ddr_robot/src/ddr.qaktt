@@ -1,0 +1,150 @@
+System ddr
+
+
+Dispatch measureInsufficient : measureInsufficient(s) // mandato dal sonar al robot per segnalare la presenza di un ostacolo
+Dispatch measureSufficient : measureSufficient(s) // mandato dal sonar al robot per segnalare che l'ostacolo è scomparso
+Dispatch cellstate : cellstate(X, Y, COLOR) // mandato dal robot al visualizzatore per aggiornare la posizione
+
+Dispatch reachedCorner : reachedCorner(c)
+Dispatch reachedHome : reachedHome(h)
+
+Context ctxddr ip [host="localhost" port=8040] // contesto per il simulatore del robot e sonar
+Context ctxgrid ip [host="127.0.0.1" port=8050 ] // contesto per il visualizzatore
+
+ExternalQActor griddisplay context ctxgrid // definisco un attore esterno nel contesto esterno (è un attore nel qak del progetto griddisplay)
+
+QActor sonar context ctxddr {
+	[#
+		var  TimerUntilNextToggle = 0L
+		
+	#]
+	State s0 initial {
+		println("[SONAR] ready!") color yellow
+	}
+	Goto measureInsufficient
+	
+	State measureInsufficient {
+		[# TimerUntilNextToggle = java.util.Random().nextLong(10000L,20000L ) #]
+		println("[SONAR] Measure Insufficient, next sufficient will be at $TimerUntilNextToggle") color yellow
+		forward robot -m measureInsufficient : measureInsufficient(s)
+	}
+	Transition t0
+		whenTimeVar TimerUntilNextToggle -> measureSufficient
+	
+	State measureSufficient {
+		[# TimerUntilNextToggle = java.util.Random().nextLong(10000L,20000L ) #]
+		println("[SONAR] Measure Sufficient, next insufficient will be at $TimerUntilNextToggle") color yellow
+		forward robot -m measureSufficient : measureSufficient(s)
+	}
+	Transition t0
+		whenTimeVar TimerUntilNextToggle -> measureInsufficient
+}
+
+
+QActor robot context ctxddr {
+	[#
+		var CurrentDirection = "Y" // (direzioni possibili: X, Y, -X, -Y)
+		var HomePosition = Pair(5, 0)
+		var CurrentPosition = HomePosition
+		var HasFinished = false
+		
+		var Corners = listOf(Pair(0, 0), Pair(0, 19), Pair(19, 19), Pair(19, 0))
+		
+		var IsPositionInCorners = false
+		var JustTurned = false
+		var directions = listOf("Y", "X", "-Y", "-X")
+		
+    	var X = CurrentPosition.first
+    	var Y = CurrentPosition.second
+		
+	#]
+	State s0 initial {
+		[# 
+	        val X = HomePosition.first
+	        val Y = HomePosition.second
+	    #]
+	    println("ROBOT STARTING") color magenta
+	    
+		forward griddisplay -m cellstate : cellstate($X, $Y, 1)
+		println("Forwarded ($X,$Y)") color magenta
+	}
+	Goto move
+	
+	State move {
+		// controlla se la posizione attuale è un corner, nel caso mandati un messaggio per dire di cambiare direzione
+		[# IsPositionInCorners = CurrentPosition in Corners #]
+		if [# IsPositionInCorners && !JustTurned #] { // gira per continuare
+			println("[ROBOT] reached corner $CurrentPosition")
+			[#
+				IsPositionInCorners = false
+				JustTurned = true
+			#]
+			
+			autodispatch reachedCorner : reachedCorner(c)
+		}
+		else { // muoviti nella direzione giusta +x, -x, +y, -y
+			[# 	        	
+	            X = CurrentPosition.first
+	            Y = CurrentPosition.second
+	    	#]
+			forward griddisplay -m cellstate : cellstate($X, $Y, 0)
+			[#
+				JustTurned = false
+				// Calcolo nuova posizione	            
+	            CurrentPosition = when(CurrentDirection) {
+	                "Y"  -> Pair(X, Y + 1)
+	                "-Y" -> Pair(X, Y - 1)
+	                "X"  -> Pair(X + 1, Y)
+	                "-X" -> Pair(X - 1, Y)
+	                else -> CurrentPosition
+	            }
+	            
+	            val curX = CurrentPosition.first
+	            val curY = CurrentPosition.second
+        	#]
+        	[# 
+	        	X = HomePosition.first
+	        	Y = HomePosition.second
+	    	#]
+			forward griddisplay -m cellstate : cellstate($X, $Y, 0)
+			
+		}
+		
+		
+	}
+	Transition t0
+		whenTime 1000 -> move
+		whenMsg measureSufficient -> stall
+		
+		whenMsg reachedCorner -> changeToNextDirection
+		whenMsg reachedHome -> stayInHome
+	
+	State changeToNextDirection {
+	    [#
+	        val currentIndex = directions.indexOf(CurrentDirection)
+	        CurrentDirection = directions[(currentIndex + 1) % directions.size]
+	        
+	        println("[ROBOT] Direction changed to: $CurrentDirection")
+	    #]
+	}
+	Goto move
+	
+	State stayInHome {
+		
+	}
+	
+	State stall { // stato in cui il robot si ferma finchè non viene rilevato che l'ostacolo è sparito
+		println("[ROBOT] stalling") color magenta
+	}
+	Transition t0
+		whenMsg measureInsufficient -> move
+	
+	State turnOnYourself { // stato in cui il robot si ferma finchè non viene rilevato che l'ostacolo è sparito
+		println("[ROBOT] turning") color magenta
+	}
+	Transition t0
+		whenTime 1000 -> turnOnYourself
+		whenMsg measureInsufficient -> stayInHome
+	
+	
+}

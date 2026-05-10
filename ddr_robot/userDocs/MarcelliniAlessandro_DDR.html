@@ -1,0 +1,451 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <!--
+<link rel="stylesheet" type="text/css" href="../css/issStyle1.css">
+<script type="text/javascript" src="../css/issStyle.js"></script>
+-->
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/foundation-sites@6.7.4/dist/css/foundation.min.css" crossorigin="anonymous">
+		<script src="https://cdn.jsdelivr.net/npm/foundation-sites@6.7.4/dist/js/foundation.min.js"crossorigin="anonymous"></script> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="./commons/resources/styles/templateISS.css">
+        <link rel="stylesheet" type="text/css" href="./commons/resources/styles/main.css">
+        <link rel="stylesheet" type="text/css" href="./commons/resources/styles/navbar.css">
+        <link rel="stylesheet" type="text/css" href="./commons/resources/styles/table.css">
+        <link rel="stylesheet" type="text/css" href="./commons/resources/styles/code.css">
+        <!-- <script type="text/javascript" src="./commons/resources/scripts/myScripts.js"></script> -->
+<style type="text/css">
+body
+{
+    margin-left:  30px;
+    margin-right: 30px;
+};
+
+P
+{
+    font-family: Tahoma;
+    font-size: 10pt;
+};
+
+a, a:visited, a:active, a:link, a:hover {
+    text-decoration: underline;
+    color: #545454;
+    background-color: transparent;
+	font-size: 93%;
+}
+
+a:hover {
+    background-color: #cccccc;
+}
+
+
+hr {
+    clear: both;
+    height: 1px;
+    color: #242424;
+    background-color: transparent;
+}
+
+h1, h2, h3 {
+    color: #242424;
+    clear: left;
+    font: 100% Tahoma, Helvetica, Arial, sans-serif;
+    margin-bottom: 0.5em;
+    padding-top: 0.5em;
+	border-radius: 10px;
+	padding: 5px;
+}
+
+top {
+	width: 100%;
+}
+
+
+#i {
+    color: #ff1010;
+}
+tt{
+	font-family: "Arial";
+    font-size: 90%;
+	color: #006600;
+}
+em{
+	font-family: "Arial";
+    font-size: 80%;
+	font-weight: bold;
+	border-style:solid;
+	border-color: #abe876;
+    color: #1632cc;
+}
+bc{
+	font-family: "Arial";
+	font-size: 90%;
+	font-weight: bold;
+    color: #990000;
+	background-color: #fcf8c7;
+}
+ks{
+	font-family: "Arial";
+	font-weight: bold;
+    color: #0000CD	;
+	font-size: 90%;
+}
+kc{
+	font-family: "Arial";
+	font-weight: bold;
+    color: #008000	;
+	font-size: 90%;
+}
+pre{
+	font-family: "Consolas";
+	font-size: 85%;
+	background-color: #f5f5f5;
+	border: 1.5px solid silver;
+	padding: 5px;
+}
+m{
+	font-family: "Helvetica";
+	line-height: 100%;
+ 	font-size: 75%;
+}
+div.body{
+	 
+    font-size: 18px;
+}
+k{
+    color: #990000;
+	font-weight: bold;
+	font-size: 90%;
+}
+h1 {
+    font-size: 150%;
+    background-color: #b2c0ff;
+	padding: 10px;
+}
+
+h2 {
+    background-color: #9ed8ff;
+    font-size: 130%;
+}
+
+h3 {
+	background-color: #e6ccff;
+    font-size: 100%;
+}
+h4 {
+    background-color: #ccffcc;
+    font-size: 100%;
+	width: 95%;
+	border-radius: 5px;
+	padding: 2px;
+}
+h5 {
+    background-color: #d5ffb0;
+    font-size: 100%;
+
+}
+div.req{
+	background-color: #d9ffb3;
+    font-size: 18px;
+	width: 700px;
+    border: 3px solid green;
+    padding: 15px;
+    margin: 10px;
+}
+div.remark{
+	background-color: #E3F2FD;
+    border: 1.5px solid #d5f2ed;
+    padding: 15px;
+    margin: 10px;
+	border-radius: 25px;
+}
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+ol, ul, li {
+  margin: 0;
+  margin-left: 10px;
+  padding: 0;
+  padding-bottom: 5px;
+}
+
+table, th, td {
+	border: 1px solid black;
+}
+
+img {
+	border: 1.5px solid #d5f2ed
+
+}
+
+a, a:visited, a:active, a:link, a:hover {
+    text-decoration: underline;
+    color: #545454;
+    background-color: transparent;
+}
+
+div.wrapdesc{
+	width: 90%;
+	margin: auto;
+}
+
+div.imagedesc{
+	width: 85%;
+	margin: auto;
+}
+
+
+</style>
+    
+ 
+   
+</head>
+	
+		
+  
+
+
+   
+<title>DDR Robot</title></head>
+    
+<!--
+	<body onload="loadNav();">
+		<div id="openButton" class="openButton" onclick="openNav(true)">&#9776; Menu</div>
+		<div id="sidenav" class="sidenav">
+			<a class="closeButton" href="javascript:void(0)" onclick="closeNav(true)">&times;</a>
+			<a href=".README.html">ReadMe</a>
+			<a class="sprint" href="../../../Sprint0/Codice/userDocs/Cold%20Storage%20Service%20-%20Natali%20V3.html">Sprint0</a>
+			<a class="sprint" href="../../../Sprint1.0/Codice/userDocs/Sprint%201.0%20-%20V3.html">Sprint1.0</a>
+			<a class="sprint" href="../../../Sprint1.1/Codice/userDocs/Sprint%201.1%20-%20V3.html">Sprint1.1</a>
+			<a id="currentSprint" class="sprint" href="#">&#8211;&#8212; Sprint2 &#8212;&#8211;</a>
+			<div class="sidenavSection">
+				<a href="#Goal Sprint 2">Goal Sprint 2</a>
+				<a href="#Requisiti">Requisiti</a>
+				<a href="#Analisi dei Requisiti">Analisi dei Requisiti</a>
+				<a href="#Analisi del Problema">Analisi del Problema</a>
+				<a href="#Test Plan">Test Plan</a>
+				<a href="#Progettazione">Progettazione</a>
+				<a href="#Deployment">Deployment</a>
+			</div>
+			<p class="separator">&mdash;&mdash;&mdash;&ndash;&ndash;&mdash;&mdash;&mdash;</p>
+			<a class="sprint" href="../../../Sprint3/Codice/userDoc/Sprint%203.html">Sprint3</a>
+			<bottom-spacer/>
+		</div>
+-->
+<body>
+<div id="top">
+<h1>LABORATORIO DI INGEGNERIA DEI SISTEMI SOFTWARE <font size="5"></font> </h1>
+</div>  
+
+<div class="body"> 
+ 
+<h2>Requirements</h2>
+ 
+<div class="remark">
+	Costruire un sistema software che comanda un Differential Drive Robot (DDR) in modo che, <br>
+	partendo dalla posizione iniziale HOME, il robot si sposti lungo il perimetro di una stanza rettangolare vuota. <br> 
+	Il DDR si deve fermare quando tornato in HOME. <br> <br>
+
+	Il DDR è anche sensibile ai dati rilevati da un Radar. <br>
+	Quando il Radar rileva un 'intruso' a una distanza minore di una distanza prefissata ``DMIN``: <br>
+	
+	<ul>
+		<li>se il DDR si sta muovendo , il DDR si ferma fino a che il Radar non rileva più un 'intruso' così vicino;</li>
+		<li>se il DDR è fermo in HOME, il DDR ruota su sè stesso fino a che un 'intruso' così vicino scompare.</li>
+	</ul>
+</div>
+
+ 
+
+<h2>Requirement analysis</h2>
+
+<div class="remark">
+	Che cosa intende il committente per Differential Drive Robot (DDR)?<br>
+	Un DDR è un tipo di robot mobile il cui movimento si basa su due ruote azionate separatamente posizionate su entrambi i lati del corpo del robot. Tramite tali ruote quindi esso può cambiare direzione variando la velocità relativa di rotazione delle sue ruote, non richiedendo un ulteriore movimento di sterzata.
+	<br>
+	I requisiti dicono di modellare un sistema che controlli il robot, questo implica che il robot non è un'entità proattiva, bensì reattiva agli stimoli indotti dal controllore. Pertanto il robot non è altro che un servizio messo a disposizione del controllore.
+	Per modellare il comportamento del robot utilizziamo il linguaggio QAK che ci permette di modellare in maniera formale entità come attori, riducendo l'abstraction gap della mera implementazione.
+	<br>
+	Modello ddr:
+	<div class="code">
+		<pre>
+
+Event rotate : rotate(Degrees)
+Event move : move(Distance)
+
+QActor robot context ctxddr {
+	[#
+		var BodyRadius = 2.0
+		
+		var CurrX = 0.0 // posizione in X
+		var CurrY = 0.0 // posizione in Y
+		var CurrRotationDegree = 0.0 // da 0 a 359.0
+		
+	#]
+	State s0 initial {
+		println("[DDR] ready!") color cyan
+	}
+	Goto waitCommand
+	
+	State waitCommand {
+		println("[DDR] waiting for commands!") color cyan
+	}
+	Transition t0
+		whenEvent rotate -> rotate
+		whenEvent move -> move
+	
+	State rotate {
+		onMsg(rotate : rotate(Degrees)) {
+			[#
+				var ReceivedDegrees = payloadArg(0).toString().toDouble()
+				
+				CurrRotationDegree = (CurrRotationDegree + ReceivedDegrees) % 360
+			#]
+			println("[DDR] rotated of $ReceivedDegrees") color cyan
+		}
+	}
+	Goto waitCommand
+	
+	State move {
+		onMsg(move : move(Distance)) {
+			[#
+				var ReceivedDistance = payloadArg(0).toString().toDouble()
+				
+				// converti gradi in radianti
+				val radians = Math.toRadians(CurrRotationDegree)
+				
+				// aggiorna posizione
+				CurrX += ReceivedDistance * kotlin.math.cos(radians)
+				CurrY += ReceivedDistance * kotlin.math.sin(radians)
+			#]
+			println("[DDR] moved of $ReceivedDistance, new current position: ($CurrX, $CurrY)") color cyan
+		}
+		
+	}
+	Goto waitCommand
+}
+		</pre>
+	</div>
+
+
+
+
+	
+	<br><br>
+	Che cosa intende il committente per Stanza? <br>
+	La stanza è lo spazio in cui il robot può muoversi, essa da specifica è definita come rettangolare e, quindi dotata di 4 lati in cui ogni coppia di lati paralleli ha stessa lunghezza.
+	<br>
+	Pertanto per modellare la stanza useremo una coppia di variabili reali che indichino la lunghezza della base e dell'altezza della stanza (in unità robotiche):
+	<br>
+	<div class="code">
+		<pre>
+
+var StanzaB = 10.0L
+var StanzaH = 15.0L
+		</pre>
+	</div>
+	<br><br>
+	Che cosa intende il committente per HOME? <br>
+	Posizione specifica all'interno della stanza da cui parte il robot inizialmente, rappresentabile come un set di coordinate e area occupata dal robot (in quanto non puntiforme).
+	<div class="code">
+		<pre>
+
+var HomeX = 0.0L
+var HomeY = 0.0L
+var HomeR = 2.0L // raggio del robot (circolare)
+		</pre>
+	</div>
+	
+	<br><br>
+	Che cosa intende il committente per radar? <br>
+	Il radar è un dispositivo che misura la distanza dall'oggetto davanti ad esso con una propria frequenza di campionamento, notificandola ai dispositivi che da esso dipendono.
+	<div class="code">
+		<pre>
+
+Event currMeasure : currMeasure(CurrDistance)
+
+QActor sonar context ctxddr {
+	[#
+		var  Timer = 0L // in ms
+		var  CurrDistance = 0.0L
+		
+	#]
+	State s0 initial {
+		println("[SONAR] ready!") color yellow
+	}
+	Goto measure
+	
+	State measure {
+		[# CurrDistance = java.util.Random().nextDouble(0.0, 20.0) #] // campione distanza corrente
+		println("[SONAR] Current measure: $CurrDistance") color yellow
+		emit currMeasure : currMeasure($CurrDistance) // emissione evento a chi interessa con la misura
+	}
+	Transition t0
+		whenTimeVar Timer -> measure // ripeti al prossimo periodo
+}
+		</pre>
+	</div>
+	<br><br>
+	Chi deve comandare il robot? <br>
+	Nasce una nuova entità che denomineremo per semplicità "mind" e che sarà il controllore del robot.
+	<div class="code">
+		<pre>
+			
+			// TODO
+		</pre>
+	</div>
+	<!-- Per vedere il modello completo <a href="https://github.com/alessandromarcellini/iss2026/blob/main/ddr_robot/src/ddr.qak" target="_blank" style="font-weight: bold;" >clicca qui</a> -->
+</div>
+ 
+
+ 
+
+<h2>Problem analysis</h2>
+ 
+
+<h2>Test plans</h2>
+	
+<div class="code">
+
+
+
+</div>
+
+
+
+
+<h2>Project</h2> 
+ 
+ 
+
+<h2>Testing</h2> 
+ 
+
+<h2>Deployment</h2> 
+
+ 
+<h2>Maintenance</h2> 
+ 
+<!-- USEFUL
+<table style="width:100%" border="1">
+<tr>
+<td style="width:50%">
+</td>
+<td></td>
+</tr>
+</table>
+-->
+	      	
+<br/><br/> 	
+</div>  
+
+<div style="background-color:rgba(86, 56, 253, 0.9); width:100%;text-align:left;color:white">
+By Marcellini Alessandro email: alessandr.marcellin2@studio.unibo.it, 
+<!-- <img src="./img/mbot-S.jpg" alt="mbot" width="15%" height="15%"> -->
+<img src="./img/alessandro_marcellini.jpg" alt="emiglio" width="8%" height="8%">
+GIT repo: https://github.com/alessandromarcellini/iss2026
+</div> 
+</body>
+</html>
