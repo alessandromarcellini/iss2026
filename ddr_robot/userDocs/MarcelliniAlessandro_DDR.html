@@ -1,43 +1,34 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-    <!--
-<link rel="stylesheet" type="text/css" href="../css/issStyle1.css">
-<script type="text/javascript" src="../css/issStyle.js"></script>
--->
-		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/foundation-sites@6.7.4/dist/css/foundation.min.css" crossorigin="anonymous">
-		<script src="https://cdn.jsdelivr.net/npm/foundation-sites@6.7.4/dist/js/foundation.min.js"crossorigin="anonymous"></script> 
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" type="text/css" href="./commons/resources/styles/templateISS.css">
-        <link rel="stylesheet" type="text/css" href="./commons/resources/styles/main.css">
-        <link rel="stylesheet" type="text/css" href="./commons/resources/styles/navbar.css">
-        <link rel="stylesheet" type="text/css" href="./commons/resources/styles/table.css">
-        <link rel="stylesheet" type="text/css" href="./commons/resources/styles/code.css">
-        <!-- <script type="text/javascript" src="./commons/resources/scripts/myScripts.js"></script> -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/foundation-sites@6.7.4/dist/css/foundation.min.css" crossorigin="anonymous">
+	<script src="https://cdn.jsdelivr.net/npm/foundation-sites@6.7.4/dist/js/foundation.min.js" crossorigin="anonymous"></script>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 <style type="text/css">
-body
-{
+
+/* ── Force background colours in all print engines ── */
+*, *::before, *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+}
+
+body {
     margin-left:  30px;
     margin-right: 30px;
-};
-
-P
-{
-    font-family: Tahoma;
+    font-family: Tahoma, Helvetica, Arial, sans-serif;
     font-size: 10pt;
-};
+}
+
+P { font-family: Tahoma; font-size: 10pt; }
 
 a, a:visited, a:active, a:link, a:hover {
     text-decoration: underline;
     color: #545454;
     background-color: transparent;
-	font-size: 93%;
+    font-size: 93%;
 }
-
-a:hover {
-    background-color: #cccccc;
-}
-
+a:hover { background-color: #cccccc; }
 
 hr {
     clear: both;
@@ -52,212 +43,215 @@ h1, h2, h3 {
     font: 100% Tahoma, Helvetica, Arial, sans-serif;
     margin-bottom: 0.5em;
     padding-top: 0.5em;
-	border-radius: 10px;
-	padding: 5px;
+    border-radius: 10px;
+    padding: 5px;
 }
 
-top {
-	width: 100%;
-}
+#i { color: #ff1010; }
 
-
-#i {
-    color: #ff1010;
-}
-tt{
-	font-family: "Arial";
+tt {
+    font-family: "Arial";
     font-size: 90%;
-	color: #006600;
+    color: #006600;
 }
-em{
-	font-family: "Arial";
+em {
+    font-family: "Arial";
     font-size: 80%;
-	font-weight: bold;
-	border-style:solid;
-	border-color: #abe876;
+    font-weight: bold;
+    border-style: solid;
+    border-color: #abe876;
     color: #1632cc;
 }
-bc{
-	font-family: "Arial";
-	font-size: 90%;
-	font-weight: bold;
+bc {
+    font-family: "Arial";
+    font-size: 90%;
+    font-weight: bold;
     color: #990000;
-	background-color: #fcf8c7;
+    background-color: #fcf8c7;
 }
-ks{
-	font-family: "Arial";
-	font-weight: bold;
-    color: #0000CD	;
-	font-size: 90%;
+ks {
+    font-family: "Arial";
+    font-weight: bold;
+    color: #0000CD;
+    font-size: 90%;
 }
-kc{
-	font-family: "Arial";
-	font-weight: bold;
-    color: #008000	;
-	font-size: 90%;
+kc {
+    font-family: "Arial";
+    font-weight: bold;
+    color: #008000;
+    font-size: 90%;
 }
-pre{
-	font-family: "Consolas";
-	font-size: 85%;
-	background-color: #f5f5f5;
-	border: 1.5px solid silver;
-	padding: 5px;
+pre {
+    font-family: "Consolas", monospace;
+    font-size: 85%;
+    background-color: #f5f5f5;
+    border: 1.5px solid silver;
+    padding: 5px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    page-break-inside: avoid;
 }
-m{
-	font-family: "Helvetica";
-	line-height: 100%;
- 	font-size: 75%;
+m {
+    font-family: "Helvetica";
+    line-height: 100%;
+    font-size: 75%;
 }
-div.body{
-	 
-    font-size: 18px;
-}
-k{
+div.body { font-size: 18px; }
+
+k {
     color: #990000;
-	font-weight: bold;
-	font-size: 90%;
+    font-weight: bold;
+    font-size: 90%;
 }
+
 h1 {
     font-size: 150%;
     background-color: #b2c0ff;
-	padding: 10px;
+    padding: 10px;
 }
-
 h2 {
     background-color: #9ed8ff;
     font-size: 130%;
 }
-
 h3 {
-	background-color: #e6ccff;
+    background-color: #e6ccff;
     font-size: 100%;
 }
 h4 {
     background-color: #ccffcc;
     font-size: 100%;
-	width: 95%;
-	border-radius: 5px;
-	padding: 2px;
+    width: 95%;
+    border-radius: 5px;
+    padding: 2px;
 }
 h5 {
     background-color: #d5ffb0;
     font-size: 100%;
-
 }
-div.req{
-	background-color: #d9ffb3;
+
+div.req {
+    background-color: #d9ffb3;
     font-size: 18px;
-	width: 700px;
+    width: 700px;
     border: 3px solid green;
     padding: 15px;
     margin: 10px;
 }
-div.remark{
-	background-color: #E3F2FD;
+
+div.remark {
+    background-color: #E3F2FD;
     border: 1.5px solid #d5f2ed;
     padding: 15px;
     margin: 10px;
-	border-radius: 25px;
+    border-radius: 25px;
 }
+
 table, th, td {
-  border: 1px solid black;
-  border-collapse: collapse;
+    border: 1px solid black;
+    border-collapse: collapse;
 }
 
 ol, ul, li {
-  margin: 0;
-  margin-left: 10px;
-  padding: 0;
-  padding-bottom: 5px;
+    margin: 0;
+    margin-left: 10px;
+    padding: 0;
+    padding-bottom: 5px;
 }
 
-table, th, td {
-	border: 1px solid black;
+img { border: 1.5px solid #d5f2ed; }
+
+div.wrapdesc  { width: 90%;  margin: auto; }
+div.imagedesc { width: 85%; margin: auto; }
+
+/* ── Footer bar ── */
+div#footer {
+    background-color: rgba(86, 56, 253, 0.9);
+    width: 100%;
+    text-align: left;
+    color: white;
+    padding: 6px;
 }
 
-img {
-	border: 1.5px solid #d5f2ed
+/* ══════════════════════════════════════════
+   PRINT-SPECIFIC OVERRIDES
+   ══════════════════════════════════════════ */
+@media print {
 
+    /* Page setup */
+    @page {
+        size: A4;
+        margin: 15mm 20mm 15mm 20mm;
+    }
+
+    body {
+        margin: 0;
+        font-size: 9pt;
+    }
+
+    /* Prevent orphaned headings */
+    h1, h2, h3, h4, h5 {
+        page-break-after: avoid;
+        break-after: avoid;
+    }
+
+    /* Keep code blocks together */
+    pre {
+        page-break-inside: avoid;
+        break-inside: avoid;
+        font-size: 7.5pt;
+        border: 1px solid #aaa;
+    }
+
+    /* Keep remark / req boxes together where possible */
+    div.remark, div.req {
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+
+    /* Widen req box for print */
+    div.req { width: 90%; }
+
+    /* Force background colours on all coloured elements */
+    h1 { background-color: #b2c0ff !important; }
+    h2 { background-color: #9ed8ff !important; }
+    h3 { background-color: #e6ccff !important; }
+    h4 { background-color: #ccffcc !important; }
+    h5 { background-color: #d5ffb0 !important; }
+    div.remark { background-color: #E3F2FD !important; }
+    div.req    { background-color: #d9ffb3 !important; }
+    pre        { background-color: #f5f5f5 !important; }
+
+    /* Footer: keep visible but compact */
+    div#footer { background-color: rgba(86,56,253,0.9) !important; color: white !important; }
+
+    /* Hide anything not useful on paper */
+    a[href]::after { content: none; }   /* suppress URL expansion */
 }
-
-a, a:visited, a:active, a:link, a:hover {
-    text-decoration: underline;
-    color: #545454;
-    background-color: transparent;
-}
-
-div.wrapdesc{
-	width: 90%;
-	margin: auto;
-}
-
-div.imagedesc{
-	width: 85%;
-	margin: auto;
-}
-
-
 </style>
-    
- 
-   
 </head>
-	
-		
-  
 
-
-   
-<title>DDR Robot</title></head>
-    
-<!--
-	<body onload="loadNav();">
-		<div id="openButton" class="openButton" onclick="openNav(true)">&#9776; Menu</div>
-		<div id="sidenav" class="sidenav">
-			<a class="closeButton" href="javascript:void(0)" onclick="closeNav(true)">&times;</a>
-			<a href=".README.html">ReadMe</a>
-			<a class="sprint" href="../../../Sprint0/Codice/userDocs/Cold%20Storage%20Service%20-%20Natali%20V3.html">Sprint0</a>
-			<a class="sprint" href="../../../Sprint1.0/Codice/userDocs/Sprint%201.0%20-%20V3.html">Sprint1.0</a>
-			<a class="sprint" href="../../../Sprint1.1/Codice/userDocs/Sprint%201.1%20-%20V3.html">Sprint1.1</a>
-			<a id="currentSprint" class="sprint" href="#">&#8211;&#8212; Sprint2 &#8212;&#8211;</a>
-			<div class="sidenavSection">
-				<a href="#Goal Sprint 2">Goal Sprint 2</a>
-				<a href="#Requisiti">Requisiti</a>
-				<a href="#Analisi dei Requisiti">Analisi dei Requisiti</a>
-				<a href="#Analisi del Problema">Analisi del Problema</a>
-				<a href="#Test Plan">Test Plan</a>
-				<a href="#Progettazione">Progettazione</a>
-				<a href="#Deployment">Deployment</a>
-			</div>
-			<p class="separator">&mdash;&mdash;&mdash;&ndash;&ndash;&mdash;&mdash;&mdash;</p>
-			<a class="sprint" href="../../../Sprint3/Codice/userDoc/Sprint%203.html">Sprint3</a>
-			<bottom-spacer/>
-		</div>
--->
 <body>
 <div id="top">
-<h1>LABORATORIO DI INGEGNERIA DEI SISTEMI SOFTWARE <font size="5"></font> </h1>
-</div>  
+    <h1>LABORATORIO DI INGEGNERIA DEI SISTEMI SOFTWARE</h1>
+</div>
 
-<div class="body"> 
- 
+<div class="body">
+
 <h2>Requirements</h2>
- 
+
 <div class="remark">
 	Costruire un sistema software che comanda un Differential Drive Robot (DDR) in modo che, <br>
-	partendo dalla posizione iniziale HOME, il robot si sposti lungo il perimetro di una stanza rettangolare vuota. <br> 
-	Il DDR si deve fermare quando tornato in HOME. <br> <br>
+	partendo dalla posizione iniziale HOME, il robot si sposti lungo il perimetro di una stanza rettangolare vuota. <br>
+	Il DDR si deve fermare quando tornato in HOME. <br><br>
 
 	Il DDR è anche sensibile ai dati rilevati da un Radar. <br>
-	Quando il Radar rileva un 'intruso' a una distanza minore di una distanza prefissata ``DMIN``: <br>
-	
+	Quando il Radar rileva un 'intruso' a una distanza minore di una distanza prefissata <code>DMIN</code>:
+
 	<ul>
-		<li>se il DDR si sta muovendo , il DDR si ferma fino a che il Radar non rileva più un 'intruso' così vicino;</li>
+		<li>se il DDR si sta muovendo, il DDR si ferma fino a che il Radar non rileva più un 'intruso' così vicino;</li>
 		<li>se il DDR è fermo in HOME, il DDR ruota su sè stesso fino a che un 'intruso' così vicino scompare.</li>
 	</ul>
 </div>
-
- 
 
 <h2>Requirement analysis</h2>
 
@@ -266,22 +260,42 @@ div.imagedesc{
 	Un DDR è un tipo di robot mobile il cui movimento si basa su due ruote azionate separatamente posizionate su entrambi i lati del corpo del robot. Tramite tali ruote quindi esso può cambiare direzione variando la velocità relativa di rotazione delle sue ruote, non richiedendo un ulteriore movimento di sterzata.
 	<br>
 	I requisiti dicono di modellare un sistema che controlli il robot, questo implica che il robot non è un'entità proattiva, bensì reattiva agli stimoli indotti dal controllore. Pertanto il robot non è altro che un servizio messo a disposizione del controllore.
-	Per modellare il comportamento del robot utilizziamo il linguaggio QAK che ci permette di modellare in maniera formale entità come attori, riducendo l'abstraction gap della mera implementazione.
+	Per modellare il comportamento del robot utilizziamo il linguaggio di modellazione QAK che ci permette di modellare in maniera formale entità come attori, riducendo l'abstraction gap della mera implementazione in un qualsiasi linguaggio di programmazione.
 	<br>
-	Modello ddr:
-	<div class="code">
-		<pre>
-
-Event rotate : rotate(Degrees)
-Event move : move(Distance)
+	Parlando con il committente è emerso che il robot è inscrivibile in un quadrato e non è da creare da zero, è fornito dal committente stesso, modelliamo quindi tale entità nel nostro sistema seguendo quelle che sono le specifiche del robot del committente.
+	<br><br>
+	Analizzando tale robot è emerso che esso offre queste funzionalità:
+	<ol style="padding-left: 40px;">
+		<li>move (per permettergli di muoversi in avanti);</li>
+		<li>turnRight (per permettergli di girarsi verso destra);</li>
+		<li>turnLeft (per permettergli di girarsi verso sinistra).</li>
+	</ol>
+	Come per le funzioni sono stati analizzati anche i segnali a cui esso risponde ed è emerso che essi sono formati in questo modo:
+	<ol style="padding-left: 40px;">
+		<li>{"robotmove":"moveForward","time": TIME};</li>
+		<li>{"robotmove":"moveBackward","time": TIME};</li>
+		<li>{"robotmove":"turnRight","time": TIME};</li>
+		<li>{"robotmove":"turnLeft","time": TIME};</li>
+		<li>{"robotmove":"alarm","time":"1"}.</li>
+	</ol>
+	<br>
+	Da questa analisi approfondita è scaturito questo modello che rappresenta il robot nelle sue funzioni:
+	<pre>
+Event turnLeft : turnLeft(Time)
+Event turnRight : turnRight(Time)
+Event moveForward : moveForward(Time)
+Event moveBackward : moveBackward(Time)
+Event alarm : alarm(time)
 
 QActor robot context ctxddr {
 	[#
-		var BodyRadius = 2.0
+		var BodyDiameter = 2.0
 		
 		var CurrX = 0.0 // posizione in X
 		var CurrY = 0.0 // posizione in Y
 		var CurrRotationDegree = 0.0 // da 0 a 359.0
+
+		var CurrTimer = 0L;
 		
 	#]
 	State s0 initial {
@@ -290,87 +304,101 @@ QActor robot context ctxddr {
 	Goto waitCommand
 	
 	State waitCommand {
-		println("[DDR] waiting for commands!") color cyan
+		println("[DDR] waiting for commands!") color magenta
 	}
 	Transition t0
-		whenEvent rotate -> rotate
-		whenEvent move -> move
+		whenEvent turnLeft  -> rotateLeft
+		whenEvent turnRight -> rotateRight
+		whenEvent moveForward  -> moveForward
+		whenEvent moveBackward -> moveBackward
 	
-	State rotate {
-		onMsg(rotate : rotate(Degrees)) {
-			[#
-				var ReceivedDegrees = payloadArg(0).toString().toDouble()
-				
-				CurrRotationDegree = (CurrRotationDegree + ReceivedDegrees) % 360
-			#]
-			println("[DDR] rotated of $ReceivedDegrees") color cyan
+	State rotateLeft {
+		onMsg(turnLeft : turnLeft(Time)) {
+			[# CurrTimer = payloadArg(0).toString().toDouble() #]
+			println("[DDR] rotating Left in $CurrTimer ms") color cyan
 		}
+		[# CurrRotationDegree = (CurrRotationDegree - (90 / CurrTimer)) % 360 #]
 	}
-	Goto waitCommand
-	
-	State move {
-		onMsg(move : move(Distance)) {
+	Transition t0
+		whenTimeVar CurrTimer -> waitCommand
+		whenEvent alarm -> waitCommand
+
+	State rotateRight {
+		onMsg(turnRight : turnRight(Time)) {
+			[# CurrTimer = payloadArg(0).toString().toDouble() #]
+			println("[DDR] rotating Right in $CurrTimer ms") color cyan
+		}
+		[# CurrRotationDegree = (CurrRotationDegree + (90 / CurrTimer)) % 360 #]
+	}
+	Transition t0
+		whenTimeVar CurrTimer -> waitCommand
+		whenEvent alarm -> waitCommand
+
+	State moveForward {
+		onMsg(moveForward : moveForward(Time)) {
 			[#
-				var ReceivedDistance = payloadArg(0).toString().toDouble()
-				
-				// converti gradi in radianti
+				CurrTimer = payloadArg(0).toString().toDouble()
 				val radians = Math.toRadians(CurrRotationDegree)
-				
-				// aggiorna posizione
 				CurrX += ReceivedDistance * kotlin.math.cos(radians)
 				CurrY += ReceivedDistance * kotlin.math.sin(radians)
 			#]
-			println("[DDR] moved of $ReceivedDistance, new current position: ($CurrX, $CurrY)") color cyan
+			println("[DDR] moving Forward in $CurrTimer ms") color cyan
 		}
-		
 	}
-	Goto waitCommand
+	Transition t0
+		whenTimeVar CurrTimer -> waitCommand
+		whenEvent alarm -> waitCommand
+
+	State moveBackward {
+		onMsg(moveBackward : moveBackward(Time)) {
+			[#
+				CurrTimer = payloadArg(0).toString().toDouble()
+				val radians = Math.toRadians(CurrRotationDegree)
+				CurrX -= ReceivedDistance * kotlin.math.cos(radians)
+				CurrY -= ReceivedDistance * kotlin.math.sin(radians)
+			#]
+			println("[DDR] moving Backward in $CurrTimer ms") color cyan
+		}
+	}
+	Transition t0
+		whenTimeVar CurrTimer -> waitCommand
+		whenEvent alarm -> waitCommand
 }
-		</pre>
-	</div>
+	</pre>
 
-
-
-
-	
 	<br><br>
-	Che cosa intende il committente per Stanza? <br>
+	Che cosa intende il committente per Stanza?<br>
 	La stanza è lo spazio in cui il robot può muoversi, essa da specifica è definita come rettangolare e, quindi dotata di 4 lati in cui ogni coppia di lati paralleli ha stessa lunghezza.
 	<br>
-	Pertanto per modellare la stanza useremo una coppia di variabili reali che indichino la lunghezza della base e dell'altezza della stanza (in unità robotiche):
+	Pertanto per modellare la stanza useremo una coppia di variabili reali che indichino la lunghezza della base e dell'altezza della stanza. L'unità di misura utilizzata per misurare tali lati sarà l'unità robotica (lunghezza del lato del robot):
+	<pre>
+var StanzaB = 10.0
+var StanzaH = 15.0
+	</pre>
+	Facendo questo è come se (concettualmente) stessimo dividendo il piano della stanza in una griglia composta da celle di grandezza pari al quadrato che inscrive il robot.
+	<br><br>
+	Che cosa intende il committente per HOME?<br>
+	La HOME è una posizione specifica all'interno della stanza da cui parte il robot all'inizio dell'esecuzione.
 	<br>
-	<div class="code">
-		<pre>
+	Per rappresentare tale entità utilizziamo un set di coordinate per indicare la posizione della HOME all'interno della stanza e un'ulteriore variabile per indicarne il diametro (pari a quello del robot stesso).
+	<pre>
+var HomeX = 0.0
+var HomeY = 0.0
+var HomeD = 2.0 // diametro del robot
+	</pre>
 
-var StanzaB = 10.0L
-var StanzaH = 15.0L
-		</pre>
-	</div>
 	<br><br>
-	Che cosa intende il committente per HOME? <br>
-	Posizione specifica all'interno della stanza da cui parte il robot inizialmente, rappresentabile come un set di coordinate e area occupata dal robot (in quanto non puntiforme).
-	<div class="code">
-		<pre>
-
-var HomeX = 0.0L
-var HomeY = 0.0L
-var HomeR = 2.0L // raggio del robot (circolare)
-		</pre>
-	</div>
-	
-	<br><br>
-	Che cosa intende il committente per radar? <br>
+	Che cosa intende il committente per radar?<br>
 	Il radar è un dispositivo che misura la distanza dall'oggetto davanti ad esso con una propria frequenza di campionamento, notificandola ai dispositivi che da esso dipendono.
-	<div class="code">
-		<pre>
-
+	<br>
+	Date queste osservazioni emerge quindi il seguente modello:
+	<pre>
 Event currMeasure : currMeasure(CurrDistance)
 
 QActor sonar context ctxddr {
 	[#
 		var  Timer = 0L // in ms
-		var  CurrDistance = 0.0L
-		
+		var  CurrDistance = 0.0
 	#]
 	State s0 initial {
 		println("[SONAR] ready!") color yellow
@@ -378,74 +406,35 @@ QActor sonar context ctxddr {
 	Goto measure
 	
 	State measure {
-		[# CurrDistance = java.util.Random().nextDouble(0.0, 20.0) #] // campione distanza corrente
+		[# CurrDistance = java.util.Random().nextDouble(0.0, 20.0) #]
 		println("[SONAR] Current measure: $CurrDistance") color yellow
-		emit currMeasure : currMeasure($CurrDistance) // emissione evento a chi interessa con la misura
+		emit currMeasure : currMeasure($CurrDistance)
 	}
 	Transition t0
-		whenTimeVar Timer -> measure // ripeti al prossimo periodo
+		whenTimeVar Timer -> measure
 }
-		</pre>
-	</div>
-	<br><br>
-	Chi deve comandare il robot? <br>
-	Nasce una nuova entità che denomineremo per semplicità "mind" e che sarà il controllore del robot.
-	<div class="code">
-		<pre>
-			
-			// TODO
-		</pre>
-	</div>
-	<!-- Per vedere il modello completo <a href="https://github.com/alessandromarcellini/iss2026/blob/main/ddr_robot/src/ddr.qak" target="_blank" style="font-weight: bold;" >clicca qui</a> -->
+	</pre>
 </div>
- 
-
- 
 
 <h2>Problem analysis</h2>
- 
 
 <h2>Test plans</h2>
-	
-<div class="code">
 
+<h2>Project</h2>
 
+<h2>Testing</h2>
 
+<h2>Deployment</h2>
+
+<h2>Maintenance</h2>
+
+<br/><br/>
 </div>
 
+<div id="footer">
+	By Marcellini Alessandro &nbsp;|&nbsp; email: alessandr.marcellin2@studio.unibo.it &nbsp;|&nbsp; <img src="./img/alessandro_marcellini.jpg" alt="emiglio" width="8%" height="8%">
+	GIT repo: https://github.com/alessandromarcellini/iss2026
+</div>
 
-
-
-<h2>Project</h2> 
- 
- 
-
-<h2>Testing</h2> 
- 
-
-<h2>Deployment</h2> 
-
- 
-<h2>Maintenance</h2> 
- 
-<!-- USEFUL
-<table style="width:100%" border="1">
-<tr>
-<td style="width:50%">
-</td>
-<td></td>
-</tr>
-</table>
--->
-	      	
-<br/><br/> 	
-</div>  
-
-<div style="background-color:rgba(86, 56, 253, 0.9); width:100%;text-align:left;color:white">
-By Marcellini Alessandro email: alessandr.marcellin2@studio.unibo.it, 
-<!-- <img src="./img/mbot-S.jpg" alt="mbot" width="15%" height="15%"> -->
-<img src="./img/alessandro_marcellini.jpg" alt="emiglio" width="8%" height="8%">
-GIT repo: https://github.com/alessandromarcellini/iss2026
-</div> 
 </body>
 </html>
